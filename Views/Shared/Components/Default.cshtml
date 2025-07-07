@@ -1,0 +1,31 @@
+﻿@model List<Sheraton.Models.MenuItem>
+
+<div class="col-md-2 sidebar d-flex flex-column" style="height: 90vh;">
+    <div>
+        <h5 class="mb-4">Điều hướng</h5>
+
+        @if (Model != null && Model.Count > 0)
+        {
+            foreach (var item in Model)
+            {
+                <a class="d-block mb-2" asp-area="@item.Area" asp-controller="@item.Controller" asp-action="@item.Action">
+                    <i class="fa-solid @item.Icon"></i> @item.Title
+                </a>
+            }
+        }
+        else
+        {
+            <p>Không có menu điều hướng phù hợp.</p>
+        }
+    </div>
+
+    <!-- Mục cố định ở dưới cùng -->
+    <div class="mt-auto pt-3 border-top">
+        <a class="d-block mb-2" asp-controller="Account" asp-action="UpdateInfo">
+            <i class="fa-solid fa-user-pen"></i> Cập nhật thông tin cá nhân
+        </a>
+        <a class="d-block" asp-controller="Account" asp-action="Logout">
+            <i class="fa-solid fa-right-from-bracket"></i> Đăng xuất
+        </a>
+    </div>
+</div>

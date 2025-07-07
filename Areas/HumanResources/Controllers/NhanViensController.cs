@@ -62,7 +62,7 @@ namespace Sheraton.Areas.HumanResources.Controllers
                 nhanVien.MaNV = Guid.NewGuid();
                 _context.Add(nhanVien);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(getNhanVien));
             }
             return View(nhanVien);
         }
@@ -113,7 +113,7 @@ namespace Sheraton.Areas.HumanResources.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(getNhanVien));
             }
             return View(nhanVien);
         }
@@ -137,7 +137,7 @@ namespace Sheraton.Areas.HumanResources.Controllers
         }
 
         // POST: HumanResources/NhanViens/Delete/5
-        [HttpPost, ActionName("Delete")]
+        [HttpPost, ActionName("deleteNhanVien")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
@@ -148,7 +148,7 @@ namespace Sheraton.Areas.HumanResources.Controllers
             }
 
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(getNhanVien));
         }
 
         private bool NhanVienExists(Guid id)

@@ -13,14 +13,14 @@ namespace Sheraton.Models
         public string SDT { get; set; }
         [Required(ErrorMessage = "Email không được để trống")]
         public string Email { get; set; }
-        [Required(ErrorMessage = "Địa chỉ không được để trống")]
+        [Required(ErrorMessage = "Giới tính không được để trống")]
         public bool GioiTinh { get; set; }
-        [Required(ErrorMessage = "Địa chỉ không được để trống")]
+        [Required(ErrorMessage = "Chức vụ không được để trống")]
         public string ChucVu { get; set; }
 
         // Navigation properties
         public ICollection<PhanCong> PhanCongs { get; set; } = new List<PhanCong>();
         public ICollection<HopDong> HopDongs { get; set; } = new List<HopDong>();
-        public ICollection<HoaDon> HoaDons { get; set; } = new List<HoaDon>();
+        public ICollection<DatHang> DatHangs { get; set; } = new List<DatHang>();
     }
 }

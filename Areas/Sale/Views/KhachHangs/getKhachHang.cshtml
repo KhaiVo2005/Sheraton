@@ -1,0 +1,54 @@
+﻿@model IEnumerable<Sheraton.Models.KhachHangg>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Quản lý khách hàng</h1>
+
+<p>
+    <a asp-action="createKhachHang">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.TenKH)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SDT)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.GioiTinh)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Email)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.TenKH)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SDT)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.GioiTinh)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Email)
+            </td>
+            <td>
+                <a asp-action="updateKhachHang" asp-route-id="@item.MaKH">Edit</a> |
+                <a asp-action="detailsKhachHang" asp-route-id="@item.MaKH">Details</a> |
+                <a asp-action="deleteKhachHang" asp-route-id="@item.MaKH">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

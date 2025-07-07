@@ -12,7 +12,7 @@ using Sheraton.Data;
 namespace Sheraton.Migrations
 {
     [DbContext(typeof(SheratonDbContext))]
-    [Migration("20250616124046_Initial")]
+    [Migration("20250707033449_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -33,24 +33,16 @@ namespace Sheraton.Migrations
                     b.Property<Guid>("MaMon")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("HopDongMaHD")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("MonAnMaMon")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<int>("SoLuong")
                         .HasColumnType("int");
 
                     b.Property<string>("TrangThai")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(50)");
 
                     b.HasKey("MaHD", "MaMon");
 
-                    b.HasIndex("HopDongMaHD");
-
-                    b.HasIndex("MonAnMaMon");
+                    b.HasIndex("MaMon");
 
                     b.ToTable("ChiTietDatTiecs");
                 });
@@ -87,6 +79,9 @@ namespace Sheraton.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid?>("NhanVienMaNV")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<int>("SoLuong")
                         .HasColumnType("int");
 
@@ -95,6 +90,8 @@ namespace Sheraton.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("MaDatHang");
+
+                    b.HasIndex("NhanVienMaNV");
 
                     b.ToTable("DatHangs");
                 });
@@ -122,44 +119,6 @@ namespace Sheraton.Migrations
                     b.ToTable("DichVus");
                 });
 
-            modelBuilder.Entity("Sheraton.Models.HoaDon", b =>
-                {
-                    b.Property<Guid>("MaHD")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("LoaiHD")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("MaDH")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("MaHopDong")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("MaNV")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("PTTT")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("TrangThai")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("MaHD");
-
-                    b.HasIndex("MaDH");
-
-                    b.HasIndex("MaHopDong");
-
-                    b.HasIndex("MaNV");
-
-                    b.ToTable("HoaDons");
-                });
-
             modelBuilder.Entity("Sheraton.Models.HopDong", b =>
                 {
                     b.Property<Guid>("MaHD")
@@ -175,12 +134,17 @@ namespace Sheraton.Migrations
                     b.Property<DateTime>("NgayKy")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("PTTT")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("SoLuong")
+                        .HasColumnType("int");
+
                     b.Property<decimal>("TienCoc")
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("TrangThai")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("MaHD");
@@ -192,7 +156,7 @@ namespace Sheraton.Migrations
                     b.ToTable("HopDongs");
                 });
 
-            modelBuilder.Entity("Sheraton.Models.KhachHang", b =>
+            modelBuilder.Entity("Sheraton.Models.KhachHangg", b =>
                 {
                     b.Property<Guid>("MaKH")
                         .ValueGeneratedOnAdd()
@@ -345,8 +309,9 @@ namespace Sheraton.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("TrangThai")
-                        .HasColumnType("bit");
+                    b.Property<string>("TrangThai")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("MaSanh");
 
@@ -357,11 +322,15 @@ namespace Sheraton.Migrations
                 {
                     b.HasOne("Sheraton.Models.HopDong", "HopDong")
                         .WithMany("ChiTietDatTiecs")
-                        .HasForeignKey("HopDongMaHD");
+                        .HasForeignKey("MaHD")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.HasOne("Sheraton.Models.MonAn", "MonAn")
                         .WithMany("ChiTietDatTiecs")
-                        .HasForeignKey("MonAnMaMon");
+                        .HasForeignKey("MaMon")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.Navigation("HopDong");
 
@@ -387,36 +356,16 @@ namespace Sheraton.Migrations
                     b.Navigation("HopDong");
                 });
 
-            modelBuilder.Entity("Sheraton.Models.HoaDon", b =>
+            modelBuilder.Entity("Sheraton.Models.DatHang", b =>
                 {
-                    b.HasOne("Sheraton.Models.DatHang", "DatHang")
-                        .WithMany("HoaDons")
-                        .HasForeignKey("MaDH")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("Sheraton.Models.HopDong", "HopDong")
-                        .WithMany("HoaDons")
-                        .HasForeignKey("MaHopDong")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("Sheraton.Models.NhanVien", "NhanVien")
-                        .WithMany("HoaDons")
-                        .HasForeignKey("MaNV")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("DatHang");
-
-                    b.Navigation("HopDong");
-
-                    b.Navigation("NhanVien");
+                    b.HasOne("Sheraton.Models.NhanVien", null)
+                        .WithMany("DatHangs")
+                        .HasForeignKey("NhanVienMaNV");
                 });
 
             modelBuilder.Entity("Sheraton.Models.HopDong", b =>
                 {
-                    b.HasOne("Sheraton.Models.KhachHang", "KhachHang")
+                    b.HasOne("Sheraton.Models.KhachHangg", "KhachHang")
                         .WithMany("HopDongs")
                         .HasForeignKey("MaKH")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -471,11 +420,6 @@ namespace Sheraton.Migrations
                     b.Navigation("NhanVien");
                 });
 
-            modelBuilder.Entity("Sheraton.Models.DatHang", b =>
-                {
-                    b.Navigation("HoaDons");
-                });
-
             modelBuilder.Entity("Sheraton.Models.DichVu", b =>
                 {
                     b.Navigation("ChiTietDichVus");
@@ -487,12 +431,10 @@ namespace Sheraton.Migrations
 
                     b.Navigation("ChiTietDichVus");
 
-                    b.Navigation("HoaDons");
-
                     b.Navigation("LichDatSanhs");
                 });
 
-            modelBuilder.Entity("Sheraton.Models.KhachHang", b =>
+            modelBuilder.Entity("Sheraton.Models.KhachHangg", b =>
                 {
                     b.Navigation("HopDongs");
                 });
@@ -509,7 +451,7 @@ namespace Sheraton.Migrations
 
             modelBuilder.Entity("Sheraton.Models.NhanVien", b =>
                 {
-                    b.Navigation("HoaDons");
+                    b.Navigation("DatHangs");
 
                     b.Navigation("HopDongs");
 

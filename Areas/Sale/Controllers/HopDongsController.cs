@@ -38,6 +38,7 @@ namespace Sheraton.Areas.Sale.Controllers
             var hopDong = await _context.HopDongs
                 .Include(h => h.KhachHang)
                 .Include(h => h.NhanVien)
+                .Include(h => h.LichDatSanhs)
                 .FirstOrDefaultAsync(m => m.MaHD == id);
             if (hopDong == null)
             {
@@ -48,31 +49,124 @@ namespace Sheraton.Areas.Sale.Controllers
         }
 
         // GET: Sale/HopDongs/Create
+        // GET: Sale/HopDongs/Create
         public IActionResult createHopDong()
         {
-            ViewData["MaKH"] = new SelectList(_context.KhachHangs, "MaKH", "Email");
-            ViewData["MaNV"] = new SelectList(_context.NhanViens, "MaNV", "ChucVu");
-            return View();
+            // Danh sách khách hàng hiển thị cả tên và email
+            var khachHangs = _context.KhachHangs
+                .Select(kh => new
+                {
+                    MaKH = kh.MaKH,
+                    ThongTin = kh.TenKH + " - " + kh.Email
+                }).ToList();
+
+            // Danh sách nhân viên hiển thị cả tên và chức vụ
+            var nhanViens = _context.NhanViens
+                .Select(nv => new
+                {
+                    MaNV = nv.MaNV,
+                    ThongTin = nv.TenNV + " - " + nv.ChucVu
+                }).ToList();
+
+            ViewData["MaKH"] = new SelectList(khachHangs, "MaKH", "ThongTin");
+            ViewData["MaNV"] = new SelectList(nhanViens, "MaNV", "ThongTin");
+
+            var danhSachSanh = _context.SanhTiecs.ToList();
+            var dsTrangThai = danhSachSanh.Select(s => new SanhTiec
+            {
+                MaSanh = s.MaSanh,
+                TenSanh = s.TenSanh,
+                SucChua = s.SucChua,
+                TrangThai = s.TrangThai
+            }).ToList();
+
+            var lichDaDat = _context.LichDatSanhs
+                .Select(l => new
+                {
+                    maSanh = l.MaSanh,
+                    batDau = l.BatDau.ToString("o"),
+                    ketThuc = l.KetThuc.ToString("o")
+                }).ToList();
+
+            ViewBag.DanhSachSanh = dsTrangThai;
+            ViewBag.LichDaDat = lichDaDat;
+
+            return View(new HopDongLichDatViewModel());
         }
+
+
+
 
         // POST: Sale/HopDongs/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // POST: Sale/HopDongs/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> createHopDong([Bind("MaHD,NgayKy,TienCoc,TrangThai,MaKH,MaNV")] HopDong hopDong)
+        public async Task<IActionResult> createHopDong(HopDongLichDatViewModel model)
         {
             if (ModelState.IsValid)
             {
-                hopDong.MaHD = Guid.NewGuid();
-                _context.Add(hopDong);
+                model.HopDong.MaHD = Guid.NewGuid();
+                _context.Add(model.HopDong);
+
+                model.LichDatSanh.MaLDS = Guid.NewGuid();
+                model.LichDatSanh.MaHD = model.HopDong.MaHD;
+                _context.Add(model.LichDatSanh);
+
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Create", "ChiTietDatTiecs", new { maHD = model.HopDong.MaHD });
             }
-            ViewData["MaKH"] = new SelectList(_context.KhachHangs, "MaKH", "Email", hopDong.MaKH);
-            ViewData["MaNV"] = new SelectList(_context.NhanViens, "MaNV", "ChucVu", hopDong.MaNV);
-            return View(hopDong);
+
+            // Load lại dropdown nếu không hợp lệ
+            ViewData["MaKH"] = new SelectList(_context.KhachHangs.Select(kh => new
+            {
+                MaKH = kh.MaKH,
+                ThongTin = kh.TenKH + " - " + kh.Email
+            }), "MaKH", "ThongTin", model.HopDong.MaKH);
+
+            ViewData["MaNV"] = new SelectList(_context.NhanViens.Select(nv => new
+            {
+                MaNV = nv.MaNV,
+                ThongTin = nv.TenNV + " - " + nv.ChucVu
+            }), "MaNV", "ThongTin", model.HopDong.MaNV);
+
+            var lichDaDatGoc = _context.LichDatSanhs.ToList();
+            var dsSanh = _context.SanhTiecs.ToList();
+
+            var dsTrangThai = dsSanh.Select(s =>
+            {
+                var biTrung = lichDaDatGoc.Any(ld =>
+                    ld.MaSanh == s.MaSanh &&
+                    model.LichDatSanh.BatDau < ld.KetThuc &&
+                    model.LichDatSanh.KetThuc > ld.BatDau);
+
+                string trangThai = s.TrangThai;
+                if (biTrung) trangThai = "Đã đặt";
+
+                return new SanhTiec
+                {
+                    MaSanh = s.MaSanh,
+                    TenSanh = s.TenSanh,
+                    SucChua = s.SucChua,
+                    TrangThai = trangThai
+                };
+            }).ToList();
+
+            ViewBag.DanhSachSanh = dsTrangThai;
+
+            // 👇 Thêm dòng này để JavaScript trong View nhận được dữ liệu lịch đã đặt
+            ViewBag.LichDaDat = lichDaDatGoc.Select(l => new
+            {
+                maSanh = l.MaSanh,
+                batDau = l.BatDau.ToString("o"),
+                ketThuc = l.KetThuc.ToString("o")
+            }).ToList();
+
+            return View(model);
         }
+
+
 
         // GET: Sale/HopDongs/Edit/5
         public async Task<IActionResult> updateHopDong(Guid? id)
@@ -87,7 +181,7 @@ namespace Sheraton.Areas.Sale.Controllers
             {
                 return NotFound();
             }
-            ViewData["MaKH"] = new SelectList(_context.KhachHangs, "MaKH", "Email", hopDong.MaKH);
+            ViewData["MaKH"] = new SelectList(_context.KhachHangs, "MaKH", "TenKH", hopDong.MaKH);
             ViewData["MaNV"] = new SelectList(_context.NhanViens, "MaNV", "ChucVu", hopDong.MaNV);
             return View(hopDong);
         }
@@ -122,7 +216,7 @@ namespace Sheraton.Areas.Sale.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(getHopDong));
             }
             ViewData["MaKH"] = new SelectList(_context.KhachHangs, "MaKH", "Email", hopDong.MaKH);
             ViewData["MaNV"] = new SelectList(_context.NhanViens, "MaNV", "ChucVu", hopDong.MaNV);
@@ -150,7 +244,7 @@ namespace Sheraton.Areas.Sale.Controllers
         }
 
         // POST: Sale/HopDongs/Delete/5
-        [HttpPost, ActionName("Delete")]
+        [HttpPost, ActionName("deleteHopDong")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
@@ -161,7 +255,7 @@ namespace Sheraton.Areas.Sale.Controllers
             }
 
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(getHopDong));
         }
 
         private bool HopDongExists(Guid id)

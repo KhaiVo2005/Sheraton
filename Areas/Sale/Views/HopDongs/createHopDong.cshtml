@@ -1,52 +1,227 @@
-﻿@model Sheraton.Models.HopDong
+﻿@using System.Text.Json
+@model Sheraton.Models.HopDongLichDatViewModel
 
 @{
+    var dsSanh = ViewBag.DanhSachSanh as List<SanhTiec>;
+    var lichDaDat = ViewBag.LichDaDat;
     ViewData["Title"] = "Create";
-    Layout = "~/Views/Shared/_LayoutSale.cshtml";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <h1>Create</h1>
 
-<h4>HopDong</h4>
+<h4>Hợp đồng</h4>
 <hr />
 <div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
+    <div class="col-md-6">
+        <form asp-action="createHopDong">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <!-- Thông tin hợp đồng -->
+            <h5>Thông tin hợp đồng</h5>
             <div class="form-group">
-                <label asp-for="NgayKy" class="control-label"></label>
-                <input asp-for="NgayKy" class="form-control" />
-                <span asp-validation-for="NgayKy" class="text-danger"></span>
+                <label asp-for="HopDong.NgayKy" class="control-label"></label>
+                <input asp-for="HopDong.NgayKy" class="form-control" />
+                <span asp-validation-for="HopDong.NgayKy" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="TienCoc" class="control-label"></label>
-                <input asp-for="TienCoc" class="form-control" />
-                <span asp-validation-for="TienCoc" class="text-danger"></span>
+                <label asp-for="HopDong.TienCoc" class="control-label"></label>
+                <input asp-for="HopDong.TienCoc" class="form-control" />
+                <span asp-validation-for="HopDong.TienCoc" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="TrangThai" class="control-label"></label>
-                <input asp-for="TrangThai" class="form-control" />
-                <span asp-validation-for="TrangThai" class="text-danger"></span>
+                <label asp-for="HopDong.TrangThai" class="control-label"></label>
+                <input asp-for="HopDong.TrangThai" class="form-control" />
+                <span asp-validation-for="HopDong.TrangThai" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="MaKH" class="control-label"></label>
-                <select asp-for="MaKH" class ="form-control" asp-items="ViewBag.MaKH"></select>
+                <label asp-for="HopDong.SoLuong" class="control-label"></label>
+                <input asp-for="HopDong.SoLuong" class="form-control" />
+                <span asp-validation-for="HopDong.SoLuong" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="MaNV" class="control-label"></label>
-                <select asp-for="MaNV" class ="form-control" asp-items="ViewBag.MaNV"></select>
+                <label asp-for="HopDong.MaKH" class="control-label"></label>
+                <select asp-for="HopDong.MaKH" class="form-control" asp-items="ViewBag.MaKH"></select>
             </div>
             <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+                <label asp-for="HopDong.MaNV" class="control-label"></label>
+                <select asp-for="HopDong.MaNV" class="form-control" asp-items="ViewBag.MaNV"></select>
+            </div>
+
+            <!-- Thông tin lịch đặt sảnh -->
+            <h5>Thông tin lịch đặt sảnh</h5>
+            <div class="form-group">
+                <label asp-for="LichDatSanh.BatDau" class="control-label"></label>
+                <input asp-for="LichDatSanh.BatDau" type="datetime-local" class="form-control" />
+                <span asp-validation-for="LichDatSanh.BatDau" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="LichDatSanh.KetThuc" class="control-label"></label>
+                <input asp-for="LichDatSanh.KetThuc" type="datetime-local" class="form-control" />
+                <span asp-validation-for="LichDatSanh.KetThuc" class="text-danger"></span>
+            </div>
+
+            <input type="hidden" id="MaSanh" name="LichDatSanh.MaSanh" value="@Model.LichDatSanh.MaSanh" />
+
+            <!-- Chọn sảnh -->
+            <div class="form-group">
+                <label>Chọn sảnh</label>
+                <div class="row">
+                    @foreach (var sanh in dsSanh)
+                    {
+                        string colorClass = sanh.TrangThai switch
+                        {
+                            "Trống" => "sanh-trong",
+                            "Đã đặt" => "sanh-dadat",
+                            "Bảo Trì" => "sanh-baotri",
+                            _ => "sanh-khac"
+                        };
+
+                        bool khongChonDuoc = sanh.TrangThai == "Đã đặt" || sanh.TrangThai == "Bảo Trì";
+                        string pointerEventStyle = khongChonDuoc ? "pointer-events: none; opacity: 0.6;" : "";
+                        string onclick = khongChonDuoc ? "" : "onclick=\"chonSanh(this)\"";
+
+                        <div class="col-md-6 mb-2">
+                            <div class="card sanh-card @colorClass"
+                                 data-masan="@sanh.MaSanh"
+                                 data-succhua="@sanh.SucChua"
+                                 style="@pointerEventStyle"
+                            @Html.Raw(onclick)>
+                                <div class="card-body text-center">
+                                    <h5 class="card-title">@sanh.TenSanh</h5>
+                                    <p class="card-text">@sanh.SucChua người</p>
+                                    <small class="trang-thai">@sanh.TrangThai</small>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <div class="form-group mt-3">
+                <input type="submit" value="Tạo hợp đồng" class="btn btn-primary" />
             </div>
         </form>
     </div>
 </div>
 
 <div>
-    <a asp-action="getHopDong">Back to List</a>
+    <a asp-action="getHopDong">Quay lại danh sách</a>
 </div>
 
+<!-- ✅ STYLE -->
+<style>
+    .sanh-card {
+        cursor: pointer;
+        border: 2px solid transparent;
+        border-radius: 10px;
+        transition: 0.3s;
+    }
+
+        .sanh-card:hover {
+            box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
+        }
+
+    .sanh-trong {
+        background-color: #e6ffe6;
+    }
+
+    .sanh-dadat {
+        background-color: #dcdcdc;
+    }
+
+    .sanh-khongducho {
+        background-color: #ffe6e6;
+    }
+
+    .sanh-baotri {
+        background-color: #fff3cd; 
+    }
+
+    .sanh-card.selected {
+        border: 2px solid #007bff;
+        box-shadow: 0 0 6px #007bff;
+    }
+</style>
+
+<!-- ✅ SCRIPT -->
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+
+    <script>
+        const lichDaDat = @Html.Raw(JsonSerializer.Serialize(ViewBag.LichDaDat));
+
+        function chonSanh(card) {
+            document.querySelectorAll(".sanh-card").forEach(el => el.classList.remove("selected"));
+            card.classList.add("selected");
+            const maSanh = card.getAttribute("data-masan");
+            document.getElementById("MaSanh").value = maSanh;
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const soLuongInput = document.querySelector('input[name="HopDong.SoLuong"]');
+            const batDauInput = document.querySelector('input[name="LichDatSanh.BatDau"]');
+            const ketThucInput = document.querySelector('input[name="LichDatSanh.KetThuc"]');
+            const allSanhCards = document.querySelectorAll(".sanh-card");
+
+            function locTheoSoLuong() {
+                const soLuong = parseInt(soLuongInput.value) || 0;
+                allSanhCards.forEach(card => {
+                    const sucChua = parseInt(card.getAttribute("data-succhua"));
+                    card.parentElement.style.display = (sucChua >= soLuong) ? "block" : "none";
+                });
+            }
+
+            function isTrungLich(maSanh, batDauMoi, ketThucMoi) {
+                for (const lich of lichDaDat) {
+                    if (lich.maSanh != maSanh) continue;
+                    const bdCu = new Date(lich.batDau);
+                    const ktCu = new Date(lich.ketThuc);
+                    if (!(ketThucMoi <= bdCu || batDauMoi >= ktCu)) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+
+            function locTheoThoiGian() {
+                const bdStr = batDauInput.value;
+                const ktStr = ketThucInput.value;
+                if (!bdStr || !ktStr) return;
+
+                const bd = new Date(bdStr);
+                const kt = new Date(ktStr);
+
+                allSanhCards.forEach(card => {
+                    const maSanh = card.getAttribute("data-masan");
+                    const isTrung = isTrungLich(maSanh, bd, kt);
+                    const trangThaiEl = card.querySelector(".trang-thai");
+
+                    if (isTrung) {
+                        card.classList.add("sanh-dadat");
+                        card.classList.remove("sanh-trong");
+                        card.style.pointerEvents = "none";
+                        card.style.opacity = "0.6";
+                        trangThaiEl.innerText = "Đã đặt";
+                    } else {
+                        card.classList.remove("sanh-dadat");
+                        card.classList.add("sanh-trong");
+                        card.style.pointerEvents = "auto";
+                        card.style.opacity = "1";
+                        trangThaiEl.innerText = "Trống";
+                        card.setAttribute("onclick", "chonSanh(this)");
+                    }
+                });
+            }
+
+            // Gọi khi load lần đầu
+            locTheoSoLuong();
+            locTheoThoiGian();
+
+            // Gọi khi người dùng thay đổi
+            soLuongInput.addEventListener("input", locTheoSoLuong);
+            batDauInput.addEventListener("change", locTheoThoiGian);
+            ketThucInput.addEventListener("change", locTheoThoiGian);
+        });
+    </script>
 }

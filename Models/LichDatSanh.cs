@@ -13,7 +13,7 @@ namespace Sheraton.Models
         [Required(ErrorMessage = "Mã khách hàng không được để trống")]
         public DateTime KetThuc { get; set; }
         [Required(ErrorMessage = "Mã khách hàng không được để trống")]
-        public string TrangThai { get; set; }
+        public string? TrangThai { get; set; } = "Chưa bắt đầu";
 
         // Foreign keys
         public Guid MaSanh { get; set; }

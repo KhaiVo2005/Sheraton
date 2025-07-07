@@ -2,7 +2,7 @@
 
 @{
     ViewData["Title"] = "Details";
-    Layout = "~/Views/Shared/_LayoutSale.cshtml";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <h1>Details</h1>
@@ -42,6 +42,36 @@
             @Html.DisplayFor(model => model.NhanVien.ChucVu)
         </dd>
     </dl>
+    <h4>Lịch đặt sảnh</h4>
+    @if (Model.LichDatSanhs != null && Model.LichDatSanhs.Any())
+    {
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Thời gian bắt đầu</th>
+                    <th>Thời gian kết thúc</th>
+                    <th>Trạng thái</th>
+                    <th>Tên sảnh</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var lich in Model.LichDatSanhs)
+                {
+                    <tr>
+                        <td>@lich.BatDau.ToString("dd/MM/yyyy HH:mm")</td>
+                        <td>@lich.KetThuc.ToString("dd/MM/yyyy HH:mm")</td>
+                        <td>@lich.TrangThai</td>
+                        <td>@lich.MaSanh</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p>Không có lịch đặt sảnh.</p>
+    }
+
 </div>
 <div>
     <a asp-action="updateHopDong" asp-route-id="@Model?.MaHD">Edit</a> |

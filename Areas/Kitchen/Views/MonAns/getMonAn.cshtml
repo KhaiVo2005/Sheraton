@@ -1,0 +1,48 @@
+﻿@model IEnumerable<Sheraton.Models.MonAn>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="createMonAn">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.TenMon)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DonGia)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.MoTa)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.TenMon)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DonGia)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.MoTa)
+            </td>
+            <td>
+                <a asp-action="updateMonAn" asp-route-id="@item.MaMon">Edit</a> |
+                <a asp-action="detailsMonAn" asp-route-id="@item.MaMon">Details</a> |
+                <a asp-action="deleteMonAn" asp-route-id="@item.MaMon">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

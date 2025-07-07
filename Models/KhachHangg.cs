@@ -2,7 +2,7 @@
 
 namespace Sheraton.Models
 {
-    public class KhachHang
+    public class KhachHangg
     {
         // Primary key and column attributes
         [Key]
@@ -11,7 +11,7 @@ namespace Sheraton.Models
         public string TenKH { get; set; }
         [Required(ErrorMessage = "Số điện thoại không được để trống")]
         public string SDT { get; set; }
-        [Required(ErrorMessage = "Địa chỉ không được để trống")]
+        [Required(ErrorMessage = "Giới tính không được để trống")]
         public bool GioiTinh { get; set; }
         [Required(ErrorMessage = "Địa chỉ không được để trống")]
         public string Email { get; set; }

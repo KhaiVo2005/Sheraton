@@ -12,20 +12,6 @@ namespace Sheraton.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "DatHangs",
-                columns: table => new
-                {
-                    MaDatHang = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    TenMH = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    SoLuong = table.Column<int>(type: "int", nullable: false),
-                    GhiChu = table.Column<string>(type: "nvarchar(max)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_DatHangs", x => x.MaDatHang);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "DichVus",
                 columns: table => new
                 {
@@ -93,11 +79,31 @@ namespace Sheraton.Migrations
                     SucChua = table.Column<int>(type: "int", nullable: false),
                     MoTa = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Gia = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
-                    TrangThai = table.Column<bool>(type: "bit", nullable: false)
+                    TrangThai = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_SanhTiecs", x => x.MaSanh);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "DatHangs",
+                columns: table => new
+                {
+                    MaDatHang = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    TenMH = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    SoLuong = table.Column<int>(type: "int", nullable: false),
+                    GhiChu = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    NhanVienMaNV = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DatHangs", x => x.MaDatHang);
+                    table.ForeignKey(
+                        name: "FK_DatHangs_NhanViens_NhanVienMaNV",
+                        column: x => x.NhanVienMaNV,
+                        principalTable: "NhanViens",
+                        principalColumn: "MaNV");
                 });
 
             migrationBuilder.CreateTable(
@@ -107,7 +113,9 @@ namespace Sheraton.Migrations
                     MaHD = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     NgayKy = table.Column<DateTime>(type: "datetime2", nullable: false),
                     TienCoc = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
-                    TrangThai = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    SoLuong = table.Column<int>(type: "int", nullable: false),
+                    TrangThai = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PTTT = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     MaKH = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     MaNV = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
@@ -135,23 +143,23 @@ namespace Sheraton.Migrations
                     MaMon = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     MaHD = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     SoLuong = table.Column<int>(type: "int", nullable: false),
-                    TrangThai = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    MonAnMaMon = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    HopDongMaHD = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                    TrangThai = table.Column<string>(type: "nvarchar(50)", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_ChiTietDatTiecs", x => new { x.MaHD, x.MaMon });
                     table.ForeignKey(
-                        name: "FK_ChiTietDatTiecs_HopDongs_HopDongMaHD",
-                        column: x => x.HopDongMaHD,
+                        name: "FK_ChiTietDatTiecs_HopDongs_MaHD",
+                        column: x => x.MaHD,
                         principalTable: "HopDongs",
-                        principalColumn: "MaHD");
+                        principalColumn: "MaHD",
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_ChiTietDatTiecs_MonAns_MonAnMaMon",
-                        column: x => x.MonAnMaMon,
+                        name: "FK_ChiTietDatTiecs_MonAns_MaMon",
+                        column: x => x.MaMon,
                         principalTable: "MonAns",
-                        principalColumn: "MaMon");
+                        principalColumn: "MaMon",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -177,41 +185,6 @@ namespace Sheraton.Migrations
                         column: x => x.MaHD,
                         principalTable: "HopDongs",
                         principalColumn: "MaHD",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "HoaDons",
-                columns: table => new
-                {
-                    MaHD = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    LoaiHD = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    PTTT = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    TrangThai = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    MaHopDong = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    MaDH = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    MaNV = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_HoaDons", x => x.MaHD);
-                    table.ForeignKey(
-                        name: "FK_HoaDons_DatHangs_MaDH",
-                        column: x => x.MaDH,
-                        principalTable: "DatHangs",
-                        principalColumn: "MaDatHang",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_HoaDons_HopDongs_MaHopDong",
-                        column: x => x.MaHopDong,
-                        principalTable: "HopDongs",
-                        principalColumn: "MaHD",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_HoaDons_NhanViens_MaNV",
-                        column: x => x.MaNV,
-                        principalTable: "NhanViens",
-                        principalColumn: "MaNV",
                         onDelete: ReferentialAction.Restrict);
                 });
 
@@ -270,14 +243,9 @@ namespace Sheraton.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_ChiTietDatTiecs_HopDongMaHD",
+                name: "IX_ChiTietDatTiecs_MaMon",
                 table: "ChiTietDatTiecs",
-                column: "HopDongMaHD");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ChiTietDatTiecs_MonAnMaMon",
-                table: "ChiTietDatTiecs",
-                column: "MonAnMaMon");
+                column: "MaMon");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ChiTietDichVus_MaDV",
@@ -285,19 +253,9 @@ namespace Sheraton.Migrations
                 column: "MaDV");
 
             migrationBuilder.CreateIndex(
-                name: "IX_HoaDons_MaDH",
-                table: "HoaDons",
-                column: "MaDH");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_HoaDons_MaHopDong",
-                table: "HoaDons",
-                column: "MaHopDong");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_HoaDons_MaNV",
-                table: "HoaDons",
-                column: "MaNV");
+                name: "IX_DatHangs_NhanVienMaNV",
+                table: "DatHangs",
+                column: "NhanVienMaNV");
 
             migrationBuilder.CreateIndex(
                 name: "IX_HopDongs_MaKH",
@@ -335,7 +293,7 @@ namespace Sheraton.Migrations
                 name: "ChiTietDichVus");
 
             migrationBuilder.DropTable(
-                name: "HoaDons");
+                name: "DatHangs");
 
             migrationBuilder.DropTable(
                 name: "PhanCongs");
@@ -345,9 +303,6 @@ namespace Sheraton.Migrations
 
             migrationBuilder.DropTable(
                 name: "DichVus");
-
-            migrationBuilder.DropTable(
-                name: "DatHangs");
 
             migrationBuilder.DropTable(
                 name: "LichDatSanhs");

@@ -8,10 +8,9 @@ namespace Sheraton.Data
         public SheratonDbContext(DbContextOptions<SheratonDbContext> options) : base(options)
         {
         }
-        public DbSet<Models.HoaDon> HoaDons { get; set; }
         public DbSet<Models.NhanVien> NhanViens { get; set; }
         public DbSet<Models.HopDong> HopDongs { get; set; }
-        public DbSet<Models.KhachHang> KhachHangs { get; set; }
+        public DbSet<Models.KhachHangg> KhachHangs { get; set; }
         public DbSet<Models.DatHang> DatHangs { get; set; }
         public DbSet<Models.LichDatSanh> LichDatSanhs { get; set; }
         public DbSet<Models.ChiTietDatTiec> ChiTietDatTiecs { get; set; }
@@ -23,25 +22,18 @@ namespace Sheraton.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            // HoaDon -> HopDong
-            modelBuilder.Entity<HoaDon>()
-                .HasOne(h => h.HopDong)
-                .WithMany(hd => hd.HoaDons)
-                .HasForeignKey(h => h.MaHopDong)
+            // ChiTietDatTiec -> MonAn
+            modelBuilder.Entity<ChiTietDatTiec>()
+                .HasOne(ct => ct.MonAn)
+                .WithMany(ma => ma.ChiTietDatTiecs)
+                .HasForeignKey(ct => ct.MaMon)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            // HoaDon -> DonHang
-            modelBuilder.Entity<HoaDon>()
-                .HasOne(h => h.DatHang)
-                .WithMany(dh => dh.HoaDons)
-                .HasForeignKey(h => h.MaDH)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            // HoaDon -> NhanVien
-            modelBuilder.Entity<HoaDon>()
-                .HasOne(h => h.NhanVien)
-                .WithMany(nv => nv.HoaDons)
-                .HasForeignKey(h => h.MaNV)
+            // ChiTietDatTiec -> HopDong
+            modelBuilder.Entity<ChiTietDatTiec>()
+                .HasOne(ct => ct.HopDong)
+                .WithMany(hd => hd.ChiTietDatTiecs) 
+                .HasForeignKey(ct => ct.MaHD)
                 .OnDelete(DeleteBehavior.Restrict);
 
             // ChiTietDichVu -> HopDong

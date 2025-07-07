@@ -15,6 +15,6 @@ namespace Sheraton.Models
         public string GhiChu { get; set; }
 
         // Navigation properties
-        public ICollection<HoaDon> HoaDons { get; set; } = new List<HoaDon>();
+        //public ICollection<HoaDon> HoaDons { get; set; } = new List<HoaDon>();
     }
 }
