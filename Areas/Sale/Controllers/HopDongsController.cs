@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -24,6 +25,7 @@ namespace Sheraton.Areas.Sale.Controllers
         public async Task<IActionResult> getHopDong()
         {
             var sheratonDbContext = _context.HopDongs.Include(h => h.KhachHang).Include(h => h.NhanVien);
+
             return View(await sheratonDbContext.ToListAsync());
         }
 
@@ -86,10 +88,15 @@ namespace Sheraton.Areas.Sale.Controllers
                     maSanh = l.MaSanh,
                     batDau = l.BatDau.ToString("o"),
                     ketThuc = l.KetThuc.ToString("o")
+
                 }).ToList();
+
 
             ViewBag.DanhSachSanh = dsTrangThai;
             ViewBag.LichDaDat = lichDaDat;
+
+            var danhsachmonan = _context.MonAns.ToList();
+            ViewBag.DanhSachMonAn = danhsachmonan;
 
             return View(new HopDongLichDatViewModel());
         }
@@ -113,6 +120,15 @@ namespace Sheraton.Areas.Sale.Controllers
                 model.LichDatSanh.MaLDS = Guid.NewGuid();
                 model.LichDatSanh.MaHD = model.HopDong.MaHD;
                 _context.Add(model.LichDatSanh);
+
+                foreach (var monAn in model.monAns)
+                {
+                    if (monAn != null && monAn.SoLuong > 0)
+                    {
+                        monAn.MaHD = model.HopDong.MaHD;
+                        _context.Add(monAn);
+                    }
+                }
 
                 await _context.SaveChangesAsync();
                 return RedirectToAction("Create", "ChiTietDatTiecs", new { maHD = model.HopDong.MaHD });
@@ -162,6 +178,8 @@ namespace Sheraton.Areas.Sale.Controllers
                 batDau = l.BatDau.ToString("o"),
                 ketThuc = l.KetThuc.ToString("o")
             }).ToList();
+
+            ViewBag.DanhSachMonAn = _context.MonAns.ToList();
 
             return View(model);
         }

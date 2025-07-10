@@ -10,5 +10,6 @@
 
         // Có thể bổ sung thêm ngày tổ chức để lọc sảnh theo ngày
         public DateTime NgayTiec => LichDatSanh.BatDau.Date;
+        public ChiTietDatTiec[] monAns { get; set; } = new ChiTietDatTiec[50];
     }
 }
