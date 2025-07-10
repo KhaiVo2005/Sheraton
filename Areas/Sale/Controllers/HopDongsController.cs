@@ -131,7 +131,7 @@ namespace Sheraton.Areas.Sale.Controllers
                 }
 
                 await _context.SaveChangesAsync();
-                return RedirectToAction("Create", "ChiTietDatTiecs", new { maHD = model.HopDong.MaHD });
+                return RedirectToAction("getHopDong", "HopDongs", new { maHD = model.HopDong.MaHD });
             }
 
             // Load lại dropdown nếu không hợp lệ

@@ -1,0 +1,54 @@
+﻿@using Sheraton.Models.ViewModel
+@model List<DoanhThuThang>
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>📊 Báo cáo doanh thu theo tháng</h2>
+
+<canvas id="revenueChart" height="100"></canvas>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Tháng</th>
+            <th>Tiền cọc</th>
+            <th>Tiền sảnh</th>
+            <th>Món ăn</th>
+            <th>Dịch vụ</th>
+            <th><strong>Tổng</strong></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Thang</td>
+                <td>@item.TienCoc.ToString("N0")</td>
+                <td>@item.TienSanh.ToString("N0")</td>
+                <td>@item.TienMonAn.ToString("N0")</td>
+                <td>@item.TienDichVu.ToString("N0")</td>
+                <td><strong>@item.Tong.ToString("N0")</strong></td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const ctx = document.getElementById('revenueChart').getContext('2d');
+        const chart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: @Html.Raw(Json.Serialize(Model.Select(m => $"Tháng {m.Thang}"))),
+                datasets: [{
+                    label: 'Tổng doanh thu',
+                    data: @Html.Raw(Json.Serialize(Model.Select(m => m.Tong))),
+                    backgroundColor: 'rgba(54, 162, 235, 0.6)'
+                }]
+            }
+        });
+    </script>
+}
