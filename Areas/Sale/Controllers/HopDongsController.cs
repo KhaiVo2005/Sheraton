@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Sheraton.Data;
 using Sheraton.Models;
+using Sheraton.Models.ViewModel;
 
 namespace Sheraton.Areas.Sale.Controllers
 {
@@ -98,7 +99,7 @@ namespace Sheraton.Areas.Sale.Controllers
             var danhsachmonan = _context.MonAns.ToList();
             ViewBag.DanhSachMonAn = danhsachmonan;
 
-            return View(new HopDongLichDatViewModel());
+            return View(new HopDongLichDat());
         }
 
 
@@ -110,7 +111,7 @@ namespace Sheraton.Areas.Sale.Controllers
         // POST: Sale/HopDongs/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> createHopDong(HopDongLichDatViewModel model)
+        public async Task<IActionResult> createHopDong(HopDongLichDat model)
         {
             if (ModelState.IsValid)
             {

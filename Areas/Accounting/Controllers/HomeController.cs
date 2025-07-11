@@ -13,7 +13,7 @@ namespace Sheraton.Areas.Accounting.Controllers
         {
             _context = context;
         }
-        
+
         public IActionResult Index()
         {
             return View();
@@ -71,6 +71,51 @@ namespace Sheraton.Areas.Accounting.Controllers
             }
 
             return View(list);
+        }
+        public async Task<IActionResult> QuanLyHoaDon()
+        {
+            var hopDongs = await _context.HopDongs
+                .Include(h => h.ChiTietDatTiecs).ThenInclude(c => c.MonAn)
+                .Include(h => h.ChiTietDichVus).ThenInclude(c => c.DichVu)
+                .Include(h => h.KhachHang)
+                .Include(h => h.NhanVien)
+                .ToListAsync();
+
+            var lichDatSanhs = await _context.LichDatSanhs
+                .Include(l => l.Sanh)
+                .ToListAsync();
+
+            var list = new List<HoaDon>();
+
+            foreach (var hd in hopDongs)
+            {
+                var lichDatSanh = lichDatSanhs.FirstOrDefault(l => l.MaHD == hd.MaHD);
+                if (lichDatSanh == null) continue;
+                var hoaDon = new HoaDon
+                {
+                    MaHD = hd.MaHD,
+                    TenKhachHang = hd.KhachHang.TenKH,
+                    TenNhanVien = hd.NhanVien.TenNV,
+                    NgayKy = hd.NgayKy,
+                    TienCoc = hd.TienCoc,
+                    TienSanh = lichDatSanh.Sanh?.Gia ?? 0,
+                    TienMonAn = hd.ChiTietDatTiecs.Sum(c => c.SoLuong * (c.MonAn?.DonGia ?? 0)),
+                    TienDichVu = hd.ChiTietDichVus.Sum(c => c.SoLuong * (c.DichVu?.DonGia ?? 0)),
+                    TrangThai = hd.TrangThai
+                };
+                list.Add(hoaDon);
+            }
+            return View(list);
+        }
+        public IActionResult CapNhapTrangThaiHoaDon(Guid maHD)
+        {
+            var hopDong = _context.HopDongs.Find(maHD);
+            if (hopDong.TrangThai == "Chưa thanh toán")
+            {
+                hopDong.TrangThai = "Đã thanh toán";
+                _context.SaveChanges();
+            }
+            return RedirectToAction("QuanLyHoaDon");
         }
     }
 }

@@ -1,0 +1,54 @@
+﻿@using Sheraton.Models.ViewModel
+@model List<HoaDon>
+
+@{
+    ViewData["Title"] = "Hóa Đơn";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2 class="mt-4 mb-4">🧾 Danh sách hóa đơn</h2>
+
+<table class="table table-bordered table-striped">
+    <thead class="table-dark">
+        <tr>
+            <th>Mã HĐ</th>
+            <th>Khách hàng</th>
+            <th>Nhân viên</th>
+            <th>Ngày ký</th>
+            <th class="text-end text-danger">Tổng tiền</th>
+            <th>Trạng thái</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var hd in Model)
+        {
+            <tr>
+                <td>@hd.MaHD</td>
+                <td>@hd.TenKhachHang</td>
+                <td>@hd.TenNhanVien</td>
+                <td>@hd.NgayKy.ToString("dd/MM/yyyy")</td>
+                <td class="text-end fw-bold text-danger">@hd.TongTien().ToString()</td>
+                <td class="text-center">
+                    @if (hd.TrangThai == "Đã thanh toán")
+                    {
+                        <span class="badge bg-success">Đã thanh toán</span>
+                    }
+                    else
+                    {
+                        <form asp-action="CapNhapTrangThaiHoaDon" asp-route-maHD="@hd.MaHD" method="post">
+                            <button class="btn btn-warning btn-sm" type="submit">Chưa thanh toán</button>
+                        </form>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-warning text-center">
+        Không có hóa đơn nào được tìm thấy.
+    </div>
+}
+

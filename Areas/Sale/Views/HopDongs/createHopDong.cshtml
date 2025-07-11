@@ -1,5 +1,6 @@
 ﻿@using System.Text.Json
-@model Sheraton.Models.HopDongLichDatViewModel
+@using Sheraton.Models.ViewModel
+@model HopDongLichDat
 
 @{
     var dsSanh = ViewBag.DanhSachSanh as List<SanhTiec>;
@@ -77,16 +78,19 @@
                             _ => "sanh-khac"
                         };
 
-                        bool khongChonDuoc = sanh.TrangThai == "Đã đặt" || sanh.TrangThai == "Bảo Trì";
+                        
+
+                        bool khongChonDuoc = sanh.TrangThai == "Đã đặt" || sanh.TrangThai == "Bảo trì";
                         string pointerEventStyle = khongChonDuoc ? "pointer-events: none; opacity: 0.6;" : "";
                         string onclick = khongChonDuoc ? "" : "onclick=\"chonSanh(this)\"";
+
 
                         <div class="col-md-6 mb-2">
                             <div class="card sanh-card @colorClass"
                                  data-masan="@sanh.MaSanh"
                                  data-succhua="@sanh.SucChua"
                                  style="@pointerEventStyle"
-                            @Html.Raw(onclick)>
+                                @Html.Raw(onclick)>
                                 <div class="card-body text-center">
                                     <h5 class="card-title">@sanh.TenSanh</h5>
                                     <p class="card-text">@sanh.SucChua người</p>
@@ -115,8 +119,12 @@
                         <input class="form-control" type="number" placeholder="Số lượng" min="1" />
                     </div>
                     <div class="col-md-3">
-                        <input class="form-control" type="text" placeholder="Trạng thái..." />
+                        <select class="form-control select-trangthai" >
+                            <option value="Chưa phục vụ">Chưa phục vụ</option>
+                            <option value="Đã phục vụ">Đã phục vụ</option>
+                        </select>
                     </div>
+
                     <div class="col-md-2 d-flex">
                         <button type="button" class="btn btn-success" onclick="themMonAn(this)">+</button>
                     </div>
@@ -160,7 +168,7 @@
     }
 
     .sanh-baotri {
-        background-color: #fff3cd; 
+        background-color: #fff3cd;
     }
 
     .sanh-card.selected {
@@ -227,6 +235,16 @@
                     const maSanh = card.getAttribute("data-masan");
                     const isTrung = isTrungLich(maSanh, bd, kt);
                     const trangThaiEl = card.querySelector(".trang-thai");
+                    const trangThaiText = trangThaiEl?.innerText?.trim();
+
+                    if (trangThaiText === "Bảo trì" || card.classList.contains("sanh-baotri")) {
+                        card.classList.remove("sanh-trong", "sanh-dadat");
+                        card.classList.add("sanh-baotri");
+                        card.style.pointerEvents = "none";
+                        card.style.opacity = "0.6";
+                        card.removeAttribute("onclick");
+                        return;
+                    }
 
                     if (isTrung) {
                         card.classList.add("sanh-dadat");
@@ -241,7 +259,7 @@
                         card.style.opacity = "1";
                         trangThaiEl.innerText = "Trống";
                         card.setAttribute("onclick", "chonSanh(this)");
-                    }
+                    } 
                 });
             }
 
@@ -255,11 +273,13 @@
             ketThucInput.addEventListener("change", locTheoThoiGian);
         });
 
+        
+
+        //----------------------------------------------------------------------------------------
         function dsMonAnOptions() {
             const ds = @Html.Raw(JsonSerializer.Serialize(ViewBag.DanhSachMonAn));
             return ds.map(mon => `<option value="${mon.MaMon}">${mon.TenMon}</option>`).join("");
         }
-
 
         const dsMonAn = @Html.Raw(JsonSerializer.Serialize(ViewBag.DanhSachMonAn));
         let monAnList = [];
@@ -274,7 +294,7 @@
                 const row = btn.closest(".monAn-item");
                 const select = row.querySelector("select");
                 const soLuong = row.querySelector("input[type='number']");
-                const trangThaiInput = row.querySelector("input[type='text']");
+                const trangThaiInput = row.querySelector(".select-trangthai");
 
                 if (!select.value || !soLuong.value || soLuong.value <= 0) {
                     alert("Vui lòng chọn món và nhập số lượng hợp lệ.");
@@ -348,8 +368,12 @@
                     <input class="form-control" type="number" placeholder="Số lượng" min="1" />
                 </div>
                 <div class="col-md-3">
-                    <input class="form-control" type="text" placeholder="Trạng thái..." />
+                    <select class="form-control select-trangthai">
+                        <option value="Chưa phục vụ">Chưa phục vụ</option>
+                        <option value="Đã phục vụ">Đã phục vụ</option>
+                    </select>
                 </div>
+
                 <div class="col-md-2 d-flex">
                     <button type="button" class="btn btn-success" onclick="themMonAn(this)">+</button>
                 </div>

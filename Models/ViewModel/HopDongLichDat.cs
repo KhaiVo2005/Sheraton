@@ -1,6 +1,6 @@
-﻿namespace Sheraton.Models
+﻿namespace Sheraton.Models.ViewModel
 {
-    public class HopDongLichDatViewModel
+    public class HopDongLichDat
     {
         public HopDong HopDong { get; set; } = new HopDong();
         public LichDatSanh LichDatSanh { get; set; } = new LichDatSanh();

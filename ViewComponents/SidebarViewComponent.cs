@@ -55,8 +55,7 @@ namespace Sheraton
             else if (role == "Accounting")
             {
                 menus.Add(new MenuItem { Area = "Accounting", Controller = "Home", Action = "ThongKeDoanhThu", Icon = "fa-chart-line", Title = "Thống kê doanh thu" });
-                menus.Add(new MenuItem { Area = "Accounting", Controller = "HoaDon", Action = "Index", Icon = "fa-file-invoice-dollar", Title = "Thanh toán hóa đơn" });
-                menus.Add(new MenuItem { Area = "Accounting", Controller = "LuongNV", Action = "Index", Icon = "fa-sack-dollar", Title = "Thanh toán lương" });
+                menus.Add(new MenuItem { Area = "Accounting", Controller = "Home", Action = "QuanLyHoaDon", Icon = "fa-file-invoice-dollar", Title = "Quản lý hoá đơn" });
             }
 
             return menus;
