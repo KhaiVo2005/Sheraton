@@ -29,16 +29,9 @@
                 <td>@hd.NgayKy.ToString("dd/MM/yyyy")</td>
                 <td class="text-end fw-bold text-danger">@hd.TongTien().ToString()</td>
                 <td class="text-center">
-                    @if (hd.TrangThai == "Đã thanh toán")
-                    {
-                        <span class="badge bg-success">Đã thanh toán</span>
-                    }
-                    else
-                    {
-                        <form asp-action="CapNhapTrangThaiHoaDon" asp-route-maHD="@hd.MaHD" method="post">
-                            <button class="btn btn-warning btn-sm" type="submit">Chưa thanh toán</button>
-                        </form>
-                    }
+                    <a asp-action="detailsHoaDon" asp-route-id="@hd.MaHD" class="btn btn-sm btn-primary">
+                        <i class="bi bi-eye"></i> Chi tiết
+                    </a>
                 </td>
             </tr>
         }

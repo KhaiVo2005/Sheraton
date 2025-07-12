@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Sheraton.Data;
 using Microsoft.AspNetCore.Identity;
+using Sheraton.Helpers;
+using Sheraton.Models.ViewModel;
 
 var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("SheratonContextConnection") ?? throw new InvalidOperationException("Connection string 'SheratonContextConnection' not found.");;
