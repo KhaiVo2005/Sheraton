@@ -5,11 +5,19 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>📊 Báo cáo doanh thu theo tháng</h2>
+<h2>📊 Báo cáo doanh thu</h2>
 
+<!-- Dropdown để chọn loại thống kê -->
+<select id="modeSelect" class="form-select mb-3" style="width: 250px;">
+    <option value="month">Theo tháng</option>
+    <option value="sanh">Theo sảnh</option>
+</select>
+
+<!-- Chart -->
 <canvas id="revenueChart" height="100"></canvas>
 
-<table class="table table-bordered">
+<!-- Bảng thống kê theo tháng -->
+<table class="table table-bordered" id="monthTable">
     <thead>
         <tr>
             <th>Tháng</th>
@@ -35,20 +43,72 @@
     </tbody>
 </table>
 
+<!-- Bảng thống kê theo sảnh -->
+<table class="table table-bordered d-none" id="sanhTable">
+    <thead>
+        <tr>
+            <th>Sảnh</th>
+            <th>Doanh thu</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in (Dictionary<string, decimal>)ViewBag.DoanhThuTheoSanh)
+        {
+            <tr>
+                <td>@item.Key</td>
+                <td>@item.Value.ToString("N0")</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
 @section Scripts {
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         const ctx = document.getElementById('revenueChart').getContext('2d');
-        const chart = new Chart(ctx, {
+
+        const monthLabels = @Html.Raw(Json.Serialize(Model.Select(m => "Tháng " + m.Thang)));
+        const monthData = @Html.Raw(Json.Serialize(Model.Select(m => m.Tong)));
+
+        const sanhDataObj = @Html.Raw(Json.Serialize(ViewBag.DoanhThuTheoSanh));
+        const sanhLabels = Object.keys(sanhDataObj);
+        const sanhData = Object.values(sanhDataObj);
+
+        let chart = new Chart(ctx, {
             type: 'bar',
             data: {
-                labels: @Html.Raw(Json.Serialize(Model.Select(m => $"Tháng {m.Thang}"))),
+                labels: monthLabels,
                 datasets: [{
-                    label: 'Tổng doanh thu',
-                    data: @Html.Raw(Json.Serialize(Model.Select(m => m.Tong))),
+                    label: 'Tổng doanh thu theo tháng',
+                    data: monthData,
                     backgroundColor: 'rgba(54, 162, 235, 0.6)'
                 }]
             }
+        });
+
+        document.getElementById('modeSelect').addEventListener('change', function () {
+            const mode = this.value;
+
+            const monthTable = document.getElementById('monthTable');
+            const sanhTable = document.getElementById('sanhTable');
+
+            if (mode === 'month') {
+                chart.data.labels = monthLabels;
+                chart.data.datasets[0].data = monthData;
+                chart.data.datasets[0].label = 'Tổng doanh thu theo tháng';
+
+                monthTable.classList.remove("d-none");
+                sanhTable.classList.add("d-none");
+            } else {
+                chart.data.labels = sanhLabels;
+                chart.data.datasets[0].data = sanhData;
+                chart.data.datasets[0].label = 'Tổng doanh thu theo sảnh';
+
+                monthTable.classList.add("d-none");
+                sanhTable.classList.remove("d-none");
+            }
+
+            chart.update();
         });
     </script>
 }

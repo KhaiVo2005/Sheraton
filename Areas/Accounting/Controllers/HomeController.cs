@@ -23,14 +23,10 @@ namespace Sheraton.Areas.Accounting.Controllers
 
         public async Task<IActionResult> ThongKeDoanhThu()
         {
-            // Lấy toàn bộ dữ liệu cần
             var hopDongs = await _context.HopDongs
                 .Include(h => h.ChiTietDatTiecs).ThenInclude(c => c.MonAn)
                 .Include(h => h.DichVu)
-                .ToListAsync();
-
-            var lichDatSanhs = await _context.LichDatSanhs
-                .Include(l => l.Sanh)
+                .Include(h => h.LichDatSanhs).ThenInclude(l => l.Sanh)
                 .ToListAsync();
 
             var list = new List<DoanhThuThang>();
@@ -38,27 +34,12 @@ namespace Sheraton.Areas.Accounting.Controllers
             for (int thang = 1; thang <= 12; thang++)
             {
                 var hds = hopDongs.Where(h => h.NgayKy.Month == thang);
-
                 decimal tienCoc = hds.Sum(h => h.TienCoc);
-
-                // Ghép sang sảnh
-                decimal tienSanh = hds
-                    .Join(lichDatSanhs,
-                        hd => hd.MaHD,
-                        lds => lds.MaHD,
-                        (hd, lds) => lds.Sanh?.Gia ?? 0)
-                    .Sum();
-
-                // Món ăn
-                decimal tienMonAn = hds
-                    .SelectMany(h => h.ChiTietDatTiecs)
-                    .Sum(c => c.SoLuong * (c.MonAn?.DonGia ?? 0));
-
-                // Dịch vụ
-                decimal tienDichVu = hds
-                    .Where(h => h.DichVu != null)
-                    .Sum(h => h.DichVu.DonGia);
-
+                decimal tienSanh = hds.SelectMany(h => h.LichDatSanhs)
+                                      .Sum(l => l.Sanh?.Gia ?? 0);
+                decimal tienMonAn = hds.SelectMany(h => h.ChiTietDatTiecs)
+                                       .Sum(c => c.SoLuong * (c.MonAn?.DonGia ?? 0));
+                decimal tienDichVu = hds.Sum(c => c.DichVu.DonGia);
                 decimal tong = tienCoc + tienSanh + tienMonAn + tienDichVu;
 
                 list.Add(new DoanhThuThang
@@ -71,6 +52,18 @@ namespace Sheraton.Areas.Accounting.Controllers
                     Tong = tong
                 });
             }
+
+            // Tính doanh thu theo sảnh
+            var doanhThuTheoSanh = hopDongs
+                .SelectMany(h => h.LichDatSanhs)
+                .Where(l => l.Sanh != null)
+                .GroupBy(l => l.Sanh.TenSanh)
+                .ToDictionary(
+                    g => g.Key,
+                    g => g.Sum(l => l.Sanh.Gia)
+                );
+
+            ViewBag.DoanhThuTheoSanh = doanhThuTheoSanh;
 
             return View(list);
         }

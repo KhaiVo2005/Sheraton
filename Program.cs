@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Sheraton.Data;
-using Microsoft.AspNetCore.Identity;
 using Sheraton.Helpers;
 using Sheraton.Models.ViewModel;
 
