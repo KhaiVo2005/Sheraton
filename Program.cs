@@ -1,14 +1,15 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Sheraton.Data;
-using Sheraton.Models.ViewModel;
-using VNPAY.NET;
+using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("SheratonContextConnection") ?? throw new InvalidOperationException("Connection string 'SheratonContextConnection' not found.");;
 
 // Add services to the container.
 builder.Services.AddRazorPages();
+builder.Services.AddHttpClient();
+builder.Services.AddScoped<PdfRenderHelper>();
 
 builder.Services.AddDbContext<SheratonDbContext>(opts => {
     opts.UseSqlServer(
@@ -50,4 +51,9 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}"
 );
 
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    SeedData.Initialize(services);
+}
 app.Run();

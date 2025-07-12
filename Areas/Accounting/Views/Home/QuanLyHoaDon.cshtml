@@ -16,7 +16,7 @@
             <th>Nhân viên</th>
             <th>Ngày ký</th>
             <th class="text-end text-danger">Tổng tiền</th>
-            <th>Trạng thái</th>
+            <th>Chi tiết hóa đơn</th>
         </tr>
     </thead>
     <tbody>
@@ -29,9 +29,16 @@
                 <td>@hd.NgayKy.ToString("dd/MM/yyyy")</td>
                 <td class="text-end fw-bold text-danger">@hd.TongTien().ToString()</td>
                 <td class="text-center">
-                    <a asp-action="ChiTietHoaDon" asp-route-maHD="@hd.MaHD" class="btn btn-sm btn-primary">
-                        <i class="bi bi-eye"></i> Chi tiết
-                    </a>
+                    @if (hd.TrangThai == "Đã thanh toán")
+                    {
+                        <span class="badge bg-success">Đã thanh toán</span>
+                    }
+                    else
+                    {
+                        <form asp-action="CapNhapTrangThaiHoaDon" asp-route-maHD="@hd.MaHD" method="post">
+                            <button class="btn btn-warning btn-sm" type="submit">Chưa thanh toán</button>
+                        </form>
+                    }
                 </td>
             </tr>
         }

@@ -109,12 +109,12 @@ namespace Sheraton.Controllers
                     hopDong.TrangThai = "Đã thanh toán";
                     _context.SaveChanges();
 
-                    return Redirect($"https://localhost:7136/Accounting/Home/ChiTietHoaDon?maHD={maHD}");
+                    return Redirect($"https://localhost:7136/Accounting/Home/detailsHoaDon?id={maHD}");
                 }
 
 
                 // Nếu thất bại
-                return Redirect($"https://localhost:7136/Accounting/Home/ChiTietHoaDon?maHD={maHD}");
+                return Redirect($"https://localhost:7136/Accounting/Home/detailsHoaDon?id={maHD}");
             }
             catch (Exception ex)
             {

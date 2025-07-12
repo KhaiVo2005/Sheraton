@@ -1,0 +1,134 @@
+﻿@model Sheraton.Models.ViewModel.HoaDon
+
+@{
+    Layout = null;
+    string FormatVND(decimal value) => string.Format("{0:N0} VND", value);
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Hóa đơn chi tiết</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+        }
+
+        h2, h4 {
+            margin-top: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        table, th, td {
+            border: 1px solid black;
+        }
+
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+
+        .text-end {
+            text-align: right;
+            margin-top: 10px;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        li {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <h2>Thông tin hợp đồng</h2>
+    <hr />
+    <p><strong>Ngày ký:</strong> @Model.NgayKy.ToString("dd/MM/yyyy")</p>
+    <p><strong>Tiền cọc:</strong> @FormatVND(Model.TienCoc)</p>
+    <p><strong>Trạng thái:</strong> @Model.TrangThai</p>
+    <p><strong>Khách hàng:</strong> @Model.TenKhachHang (@Model.hopDong.KhachHang.Email)</p>
+    <p><strong>Nhân viên phụ trách:</strong> @Model.TenNhanVien (@Model.hopDong.NhanVien.ChucVu)</p>
+    <p><strong>Dịch vụ:</strong> @Model.TenDichVu</p>
+
+    <h4>Lịch đặt sảnh</h4>
+    @if (Model.hopDong.LichDatSanhs?.Any() == true)
+    {
+        <table>
+            <thead>
+                <tr>
+                    <th>Thời gian bắt đầu</th>
+                    <th>Thời gian kết thúc</th>
+                    <th>Trạng thái</th>
+                    <th>Tên sảnh</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var lich in Model.hopDong.LichDatSanhs)
+                {
+                    <tr>
+                        <td>@lich.BatDau.ToString("dd/MM/yyyy HH:mm")</td>
+                        <td>@lich.KetThuc.ToString("dd/MM/yyyy HH:mm")</td>
+                        <td>@lich.TrangThai</td>
+                        <td>@lich.Sanh?.TenSanh</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p>Không có lịch đặt sảnh.</p>
+    }
+
+    <h4>Chi tiết món ăn đặt tiệc</h4>
+    @if (Model.hopDong.ChiTietDatTiecs?.Any() == true)
+    {
+        <table>
+            <thead>
+                <tr>
+                    <th>Món ăn</th>
+                    <th>Số lượng</th>
+                    <th>Đơn giá</th>
+                    <th>Thành tiền</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.hopDong.ChiTietDatTiecs)
+                {
+                    <tr>
+                        <td>@item.MonAn?.TenMon</td>
+                        <td>@item.SoLuong</td>
+                        <td>@FormatVND(item.MonAn?.DonGia ?? 0)</td>
+                        <td>@FormatVND(item.SoLuong * (item.MonAn?.DonGia ?? 0))</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <p class="text-end"><strong>Tổng tiền món ăn: @FormatVND(Model.TienMonAn)</strong></p>
+    }
+    else
+    {
+        <p>Không có món ăn được đặt.</p>
+    }
+
+    <hr />
+    <h4>Tổng kết thanh toán</h4>
+    <ul>
+        <li><strong>Tiền sảnh:</strong> @FormatVND(Model.TienSanh)</li>
+        <li><strong>Tiền món ăn:</strong> @FormatVND(Model.TienMonAn)</li>
+        <li><strong>Tiền dịch vụ:</strong> @FormatVND(Model.TienDichVu)</li>
+        <li><strong>Tiền cọc:</strong> @FormatVND(Model.TienCoc)</li>
+        <li><strong>Tổng cộng:</strong> @FormatVND(Model.TongTien())</li>
+    </ul>
+</body>
+</html>

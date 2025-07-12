@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Sheraton.Data;
+using Sheraton.Helpers;
+using Sheraton.Models;
 using Sheraton.Models.ViewModel;
 
 namespace Sheraton.Areas.Accounting.Controllers
@@ -24,7 +26,7 @@ namespace Sheraton.Areas.Accounting.Controllers
             // Lấy toàn bộ dữ liệu cần
             var hopDongs = await _context.HopDongs
                 .Include(h => h.ChiTietDatTiecs).ThenInclude(c => c.MonAn)
-                .Include(h => h.ChiTietDichVus).ThenInclude(c => c.DichVu)
+                .Include(h => h.DichVu)
                 .ToListAsync();
 
             var lichDatSanhs = await _context.LichDatSanhs
@@ -54,8 +56,8 @@ namespace Sheraton.Areas.Accounting.Controllers
 
                 // Dịch vụ
                 decimal tienDichVu = hds
-                    .SelectMany(h => h.ChiTietDichVus)
-                    .Sum(c => c.SoLuong * (c.DichVu?.DonGia ?? 0));
+                    .Where(h => h.DichVu != null)
+                    .Sum(h => h.DichVu.DonGia);
 
                 decimal tong = tienCoc + tienSanh + tienMonAn + tienDichVu;
 
@@ -76,8 +78,9 @@ namespace Sheraton.Areas.Accounting.Controllers
         {
             var hopDongs = await _context.HopDongs
                 .Include(h => h.ChiTietDatTiecs).ThenInclude(c => c.MonAn)
-                .Include(h => h.ChiTietDichVus).ThenInclude(c => c.DichVu)
+                .Include(h => h.DichVu)
                 .Include(h => h.LichDatSanhs).ThenInclude(l => l.Sanh)
+                .Include(h => h.DichVu)
                 .Include(h => h.KhachHang)
                 .Include(h => h.NhanVien)
                 .ToListAsync();
@@ -95,7 +98,7 @@ namespace Sheraton.Areas.Accounting.Controllers
                     TienCoc = hd.TienCoc,
                     TienSanh = hd.LichDatSanhs.Sum(c => c.Sanh.Gia),
                     TienMonAn = hd.ChiTietDatTiecs.Sum(c => c.SoLuong * (c.MonAn?.DonGia ?? 0)),
-                    TienDichVu = hd.ChiTietDichVus.Sum(c => c.SoLuong * (c.DichVu?.DonGia ?? 0)),
+                    TienDichVu = hd.DichVu?.DonGia ?? 0,
                     TrangThai = hd.TrangThai
                 };
                 list.Add(hoaDon);
@@ -115,13 +118,13 @@ namespace Sheraton.Areas.Accounting.Controllers
                     _context.SaveChanges();
                 }
 
-                return RedirectToAction("ChiTietHoaDon", new { maHD });
+                return RedirectToAction("detailsHoaDon", new { id = maHD });
             }
             else if (hinhThuc == "Online")
             {
                 var hopDong = _context.HopDongs
                     .Include(h => h.ChiTietDatTiecs).ThenInclude(c => c.MonAn)
-                    .Include(h => h.ChiTietDichVus).ThenInclude(c => c.DichVu)
+                    .Include(h => h.DichVu)
                     .Include(h => h.LichDatSanhs).ThenInclude(l => l.Sanh)
                     .Include(h => h.KhachHang)
                     .Include(h => h.NhanVien)
@@ -132,7 +135,7 @@ namespace Sheraton.Areas.Accounting.Controllers
                 var TienCoc = hopDong.TienCoc;
                 var TienSanh = hopDong.LichDatSanhs.Sum(c => c.Sanh.Gia);
                 var TienMonAn = hopDong.ChiTietDatTiecs.Sum(c => c.SoLuong * (c.MonAn?.DonGia ?? 0));
-                var TienDichVu = hopDong.ChiTietDichVus.Sum(c => c.SoLuong * (c.DichVu?.DonGia ?? 0));
+                var TienDichVu = hopDong.DichVu.DonGia;
 
                 decimal tongTien = TienCoc + TienSanh + TienMonAn + TienDichVu;
 
@@ -147,23 +150,102 @@ namespace Sheraton.Areas.Accounting.Controllers
 
             }
 
-            return RedirectToAction("ChiTietHoaDon", new { maHD });
+            return RedirectToAction("detailsHoaDon", new { id = maHD });
         }
 
-
-        public async Task<IActionResult> ChiTietHoaDon(Guid maHD)
+        public async Task<IActionResult> detailsHoaDon(Guid? id)
         {
+            if (id == null)
+            {
+                return NotFound();
+            }
             var hopDong = await _context.HopDongs
                 .Include(h => h.KhachHang)
                 .Include(h => h.NhanVien)
-                .Include(h => h.LichDatSanhs)
-                .FirstOrDefaultAsync(m => m.MaHD == maHD);
-            if (hopDong == null)
+                .Include(h => h.LichDatSanhs).ThenInclude(c => c.Sanh)
+                .Include(h => h.ChiTietDatTiecs).ThenInclude(c => c.MonAn)
+                .Include(h => h.DichVu)
+                .FirstOrDefaultAsync(h => h.MaHD == id);
+
+            decimal tienMonAn = hopDong.ChiTietDatTiecs?.Sum(c => c.SoLuong * (c.MonAn?.DonGia ?? 0)) ?? 0;
+
+            // ✅ Tính tiền dịch vụ
+            decimal tienDichVu = hopDong.DichVu?.DonGia ?? 0;
+
+            // ✅ Tính tiền sảnh
+            decimal tienSanh = hopDong.LichDatSanhs?.FirstOrDefault()?.Sanh?.Gia ?? 0;
+            var hoaDon = new HoaDon
+            {
+                MaHD = hopDong.MaHD,
+                TenKhachHang = hopDong.KhachHang.TenKH,
+                TenNhanVien = hopDong.NhanVien.TenNV,
+                TenDichVu = hopDong.DichVu.TenDV,
+                NgayKy = hopDong.NgayKy,
+                TienCoc = hopDong.TienCoc,
+                TienMonAn = tienMonAn,
+                TienDichVu = tienDichVu,
+                TienSanh = tienSanh,
+                TrangThai = hopDong.TrangThai,
+                hopDong = hopDong,
+                chiTietDatTiecs = hopDong.ChiTietDatTiecs?.ToList() ?? new()
+            };
+
+
+            if (hoaDon == null)
             {
                 return NotFound();
             }
 
-            return View(hopDong);
+            return View(hoaDon);
+        }
+
+        public async Task<IActionResult> ExportHoaDonToPdf(Guid id, [FromServices] PdfRenderHelper pdfHelper)
+        {
+            var hopDong = await _context.HopDongs
+                .Include(h => h.KhachHang)
+                .Include(h => h.NhanVien)
+                .Include(h => h.LichDatSanhs).ThenInclude(c => c.Sanh)
+                .Include(h => h.ChiTietDatTiecs).ThenInclude(c => c.MonAn)
+                .Include(h => h.DichVu)
+                .FirstOrDefaultAsync(h => h.MaHD == id);
+
+            decimal tienMonAn = hopDong.ChiTietDatTiecs?.Sum(c => c.SoLuong * (c.MonAn?.DonGia ?? 0)) ?? 0;
+
+            // ✅ Tính tiền dịch vụ
+            decimal tienDichVu = hopDong.DichVu?.DonGia ?? 0;
+
+            // ✅ Tính tiền sảnh
+            decimal tienSanh = hopDong.LichDatSanhs?.FirstOrDefault()?.Sanh?.Gia ?? 0;
+            var hoaDon = new HoaDon
+            {
+                MaHD = hopDong.MaHD,
+                TenKhachHang = hopDong.KhachHang.TenKH,
+                TenNhanVien = hopDong.NhanVien.TenNV,
+                TenDichVu = hopDong.DichVu.TenDV,
+                NgayKy = hopDong.NgayKy,
+                TienCoc = hopDong.TienCoc,
+                TienMonAn = tienMonAn,
+                TienDichVu = tienDichVu,
+                TienSanh = tienSanh,
+                TrangThai = hopDong.TrangThai,
+                hopDong = hopDong,
+                chiTietDatTiecs = hopDong.ChiTietDatTiecs?.ToList() ?? new()
+            };
+
+
+            // 1️⃣ Render Razor View thành HTML
+            string htmlContent = await pdfHelper.RenderViewAsync(this, "/Areas/Accounting/Views/Home/Export.cshtml", hoaDon);
+
+            // 2️⃣ Gọi API Python (http://localhost:5000/api/pdf)
+            using var httpClient = new HttpClient();
+            var response = await httpClient.PostAsJsonAsync("http://localhost:5000/api/pdf", new { html = htmlContent });
+
+            if (!response.IsSuccessStatusCode)
+                return StatusCode((int)response.StatusCode, "Không thể tạo PDF");
+
+            // 3️⃣ Trả file PDF cho trình duyệt
+            var pdfBytes = await response.Content.ReadAsByteArrayAsync();
+            return File(pdfBytes, "application/pdf", "HoaDon.pdf");
         }
     }
 }
