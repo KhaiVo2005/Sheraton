@@ -63,7 +63,9 @@ namespace Sheraton.Migrations
                     SDT = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     GioiTinh = table.Column<bool>(type: "bit", nullable: false),
-                    ChucVu = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    ChucVu = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    TK = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    MK = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -84,6 +86,26 @@ namespace Sheraton.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_SanhTiecs", x => x.MaSanh);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "BangLuongs",
+                columns: table => new
+                {
+                    MaBL = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    TongGioLam = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
+                    TongLuong = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: true),
+                    MaNV = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_BangLuongs", x => x.MaBL);
+                    table.ForeignKey(
+                        name: "FK_BangLuongs_NhanViens_MaNV",
+                        column: x => x.MaNV,
+                        principalTable: "NhanViens",
+                        principalColumn: "MaNV",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -117,11 +139,18 @@ namespace Sheraton.Migrations
                     TrangThai = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     PTTT = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     MaKH = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    MaNV = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    MaNV = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    MaDV = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_HopDongs", x => x.MaHD);
+                    table.ForeignKey(
+                        name: "FK_HopDongs_DichVus_MaDV",
+                        column: x => x.MaDV,
+                        principalTable: "DichVus",
+                        principalColumn: "MaDV",
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_HopDongs_KhachHangs_MaKH",
                         column: x => x.MaKH,
@@ -159,32 +188,6 @@ namespace Sheraton.Migrations
                         column: x => x.MaMon,
                         principalTable: "MonAns",
                         principalColumn: "MaMon",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "ChiTietDichVus",
-                columns: table => new
-                {
-                    MaHD = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    MaDV = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    SoLuong = table.Column<int>(type: "int", nullable: false),
-                    TrangThai = table.Column<string>(type: "nvarchar(max)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ChiTietDichVus", x => new { x.MaHD, x.MaDV });
-                    table.ForeignKey(
-                        name: "FK_ChiTietDichVus_DichVus_MaDV",
-                        column: x => x.MaDV,
-                        principalTable: "DichVus",
-                        principalColumn: "MaDV",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_ChiTietDichVus_HopDongs_MaHD",
-                        column: x => x.MaHD,
-                        principalTable: "HopDongs",
-                        principalColumn: "MaHD",
                         onDelete: ReferentialAction.Restrict);
                 });
 
@@ -243,19 +246,24 @@ namespace Sheraton.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_BangLuongs_MaNV",
+                table: "BangLuongs",
+                column: "MaNV");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_ChiTietDatTiecs_MaMon",
                 table: "ChiTietDatTiecs",
                 column: "MaMon");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ChiTietDichVus_MaDV",
-                table: "ChiTietDichVus",
-                column: "MaDV");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_DatHangs_NhanVienMaNV",
                 table: "DatHangs",
                 column: "NhanVienMaNV");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_HopDongs_MaDV",
+                table: "HopDongs",
+                column: "MaDV");
 
             migrationBuilder.CreateIndex(
                 name: "IX_HopDongs_MaKH",
@@ -287,10 +295,10 @@ namespace Sheraton.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "ChiTietDatTiecs");
+                name: "BangLuongs");
 
             migrationBuilder.DropTable(
-                name: "ChiTietDichVus");
+                name: "ChiTietDatTiecs");
 
             migrationBuilder.DropTable(
                 name: "DatHangs");
@@ -302,9 +310,6 @@ namespace Sheraton.Migrations
                 name: "MonAns");
 
             migrationBuilder.DropTable(
-                name: "DichVus");
-
-            migrationBuilder.DropTable(
                 name: "LichDatSanhs");
 
             migrationBuilder.DropTable(
@@ -312,6 +317,9 @@ namespace Sheraton.Migrations
 
             migrationBuilder.DropTable(
                 name: "SanhTiecs");
+
+            migrationBuilder.DropTable(
+                name: "DichVus");
 
             migrationBuilder.DropTable(
                 name: "KhachHangs");

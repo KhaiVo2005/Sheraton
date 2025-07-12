@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Sheraton.Data;
+using Sheraton.Helpers;
 using Sheraton.Models;
 using Sheraton.Models.ViewModel;
 
@@ -41,6 +42,7 @@ namespace Sheraton.Areas.Sale.Controllers
             var hopDong = await _context.HopDongs
                 .Include(h => h.KhachHang)
                 .Include(h => h.NhanVien)
+                .Include(h => h.DichVu)
                 .Include(h => h.LichDatSanhs)
                 .FirstOrDefaultAsync(m => m.MaHD == id);
             if (hopDong == null)
@@ -71,8 +73,16 @@ namespace Sheraton.Areas.Sale.Controllers
                     ThongTin = nv.TenNV + " - " + nv.ChucVu
                 }).ToList();
 
+            var dichVus = _context.DichVus
+                .Select(dv => new
+                {
+                    MaDV = dv.MaDV,
+                    ThongTin = dv.TenDV
+                }).ToList();
+
             ViewData["MaKH"] = new SelectList(khachHangs, "MaKH", "ThongTin");
             ViewData["MaNV"] = new SelectList(nhanViens, "MaNV", "ThongTin");
+            ViewData["MaDV"] = new SelectList(dichVus, "MaDV", "ThongTin");
 
             var danhSachSanh = _context.SanhTiecs.ToList();
             var dsTrangThai = danhSachSanh.Select(s => new SanhTiec
@@ -148,6 +158,12 @@ namespace Sheraton.Areas.Sale.Controllers
                 ThongTin = nv.TenNV + " - " + nv.ChucVu
             }), "MaNV", "ThongTin", model.HopDong.MaNV);
 
+            ViewData["MaDV"] = new SelectList(_context.DichVus.Select(dv => new
+            {
+                MaDV = dv.MaDV,
+                ThongTin = dv.TenDV
+            }), "MaDV", "ThongTin", model.HopDong.MaNV);
+
             var lichDaDatGoc = _context.LichDatSanhs.ToList();
             var dsSanh = _context.SanhTiecs.ToList();
 
@@ -202,6 +218,7 @@ namespace Sheraton.Areas.Sale.Controllers
             }
             ViewData["MaKH"] = new SelectList(_context.KhachHangs, "MaKH", "TenKH", hopDong.MaKH);
             ViewData["MaNV"] = new SelectList(_context.NhanViens, "MaNV", "ChucVu", hopDong.MaNV);
+            ViewData["MaDV"] = new SelectList(_context.NhanViens, "MaDV", "TenDV", hopDong.MaNV);
             return View(hopDong);
         }
 
@@ -210,7 +227,7 @@ namespace Sheraton.Areas.Sale.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> updateHopDong(Guid id, [Bind("MaHD,NgayKy,TienCoc,TrangThai,MaKH,MaNV")] HopDong hopDong)
+        public async Task<IActionResult> updateHopDong(Guid id, [Bind("MaHD,NgayKy,TienCoc,TrangThai,MaKH,MaNV,MaDV")] HopDong hopDong)
         {
             if (id != hopDong.MaHD)
             {
@@ -239,6 +256,8 @@ namespace Sheraton.Areas.Sale.Controllers
             }
             ViewData["MaKH"] = new SelectList(_context.KhachHangs, "MaKH", "Email", hopDong.MaKH);
             ViewData["MaNV"] = new SelectList(_context.NhanViens, "MaNV", "ChucVu", hopDong.MaNV);
+            ViewData["MaDV"] = new SelectList(_context.DichVus, "MaDV", "TenDV", hopDong.MaDV);
+
             return View(hopDong);
         }
 
@@ -253,6 +272,7 @@ namespace Sheraton.Areas.Sale.Controllers
             var hopDong = await _context.HopDongs
                 .Include(h => h.KhachHang)
                 .Include(h => h.NhanVien)
+                .Include(h => h.DichVu)
                 .FirstOrDefaultAsync(m => m.MaHD == id);
             if (hopDong == null)
             {
@@ -281,5 +301,32 @@ namespace Sheraton.Areas.Sale.Controllers
         {
             return _context.HopDongs.Any(e => e.MaHD == id);
         }
+        public async Task<IActionResult> ExportHopDongToPdf(Guid id, [FromServices] PdfRenderHelper pdfHelper)
+        {
+            var hopDong = await _context.HopDongs
+                .Include(h => h.KhachHang)
+                .Include(h => h.NhanVien)
+                .Include(h => h.DichVu)
+                .Include(h => h.LichDatSanhs)
+                .FirstOrDefaultAsync(h => h.MaHD == id);
+
+            if (hopDong == null) return NotFound();
+
+            // 1️⃣ Render Razor View thành HTML
+            string htmlContent = await pdfHelper.RenderViewAsync(this, "/Areas/Sale/Views/HopDongs/Export.cshtml", hopDong);
+
+            // 2️⃣ Gọi API Python (http://localhost:5000/api/pdf)
+            using var httpClient = new HttpClient();
+            var response = await httpClient.PostAsJsonAsync("http://localhost:5000/api/pdf", new { html = htmlContent });
+
+            if (!response.IsSuccessStatusCode)
+                return StatusCode((int)response.StatusCode, "Không thể tạo PDF");
+
+            // 3️⃣ Trả file PDF cho trình duyệt
+            var pdfBytes = await response.Content.ReadAsByteArrayAsync();
+            return File(pdfBytes, "application/pdf", "HopDong.pdf");
+        }
+
+
     }
 }

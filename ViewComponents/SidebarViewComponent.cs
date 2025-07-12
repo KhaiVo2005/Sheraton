@@ -44,7 +44,7 @@ namespace Sheraton
             else if (role == "HumanResources")
             {
                 menus.Add(new MenuItem { Area = "HumanResources", Controller = "NhanViens", Action = "getNhanVien", Icon = "fa-id-card", Title = "Quản lý nhân sự" });
-                menus.Add(new MenuItem { Area = "HumanResources", Controller = "LuongNV", Action = "Index", Icon = "fa-money-check-dollar", Title = "Tính lương nhân viên" });
+                menus.Add(new MenuItem { Area = "HumanResources", Controller = "ChamCong", Action = "UploadChamCong", Icon = "fa-money-check-dollar", Title = "Tính lương nhân viên" });
             }
             else if (role == "Kitchen")
             {

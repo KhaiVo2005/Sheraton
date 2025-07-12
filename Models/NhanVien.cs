@@ -17,10 +17,15 @@ namespace Sheraton.Models
         public bool GioiTinh { get; set; }
         [Required(ErrorMessage = "Chức vụ không được để trống")]
         public string ChucVu { get; set; }
+        [Required(ErrorMessage = "Tài khoản không được để trống")]
+        public string TK { get; set; }
+        [Required(ErrorMessage = "Mật khẩu không được để trống")]
+        public string MK { get; set; }
 
         // Navigation properties
         public ICollection<PhanCong> PhanCongs { get; set; } = new List<PhanCong>();
         public ICollection<HopDong> HopDongs { get; set; } = new List<HopDong>();
         public ICollection<DatHang> DatHangs { get; set; } = new List<DatHang>();
+        public ICollection<BangLuong> BangLuongs { get; set; } = new List<BangLuong>();
     }
 }

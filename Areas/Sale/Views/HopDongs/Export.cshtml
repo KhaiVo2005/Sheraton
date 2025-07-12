@@ -1,0 +1,90 @@
+﻿@model Sheraton.Models.HopDong
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Hợp đồng</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 30px;
+        }
+
+        h4 {
+            margin-top: 0;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        table, th, td {
+            border: 1px solid black;
+        }
+
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+
+        dl dt {
+            font-weight: bold;
+        }
+
+        dl dd {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h4>Hợp đồng</h4>
+    <dl>
+        <dt>Ngày ký:</dt>
+        <dd>@Model.NgayKy.ToString("dd/MM/yyyy")</dd>
+
+        <dt>Tiền cọc:</dt>
+        <dd>@Model.TienCoc</dd>
+
+        <dt>Trạng thái:</dt>
+        <dd>@Model.TrangThai</dd>
+
+        <dt>Khách hàng:</dt>
+        <dd>@Model.KhachHang?.Email</dd>
+
+        <dt>Nhân viên:</dt>
+        <dd>@Model.NhanVien?.ChucVu</dd>
+    </dl>
+
+    <h4>Lịch đặt sảnh</h4>
+    @if (Model.LichDatSanhs != null && Model.LichDatSanhs.Any())
+    {
+        <table>
+            <thead>
+                <tr>
+                    <th>Thời gian bắt đầu</th>
+                    <th>Thời gian kết thúc</th>
+                    <th>Trạng thái</th>
+                    <th>Tên sảnh</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var lich in Model.LichDatSanhs)
+                {
+                    <tr>
+                        <td>@lich.BatDau.ToString("dd/MM/yyyy HH:mm")</td>
+                        <td>@lich.KetThuc.ToString("dd/MM/yyyy HH:mm")</td>
+                        <td>@lich.TrangThai</td>
+                        <td>@lich.MaSanh</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p>Không có lịch đặt sảnh.</p>
+    }
+</body>
+</html>

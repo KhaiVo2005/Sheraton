@@ -1,0 +1,110 @@
+﻿@model Sheraton.Models.ViewModel.HoaDon
+
+@{
+    ViewData["Title"] = "Hóa đơn chi tiết";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    string FormatVND(decimal value) => string.Format("{0:N0} VND", value);
+}
+
+<h2>Thông tin hợp đồng</h2>
+<hr />
+<dl class="row">
+    <dt class="col-sm-3">Ngày ký</dt>
+    <dd class="col-sm-9">@Model.NgayKy.ToString("dd/MM/yyyy")</dd>
+
+    <dt class="col-sm-3">Tiền cọc</dt>
+    <dd class="col-sm-9">@FormatVND(Model.TienCoc)</dd>
+
+    <dt class="col-sm-3">Trạng thái</dt>
+    <dd class="col-sm-9">@Model.TrangThai</dd>
+
+    <dt class="col-sm-3">Khách hàng</dt>
+    <dd class="col-sm-9">@Model.TenKhachHang (@Model.hopDong.KhachHang.Email)</dd>
+
+    <dt class="col-sm-3">Nhân viên phụ trách</dt>
+    <dd class="col-sm-9">@Model.TenNhanVien (@Model.hopDong.NhanVien.ChucVu)</dd>
+
+    <dt class="col-sm-3">Dịch vụ</dt>
+    <dd class="col-sm-9">@Model.TenDichVu </dd>
+</dl>
+
+<h4>Lịch đặt sảnh</h4>
+@if (Model.hopDong.LichDatSanhs != null && Model.hopDong.LichDatSanhs.Any())
+{
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Thời gian bắt đầu</th>
+                <th>Thời gian kết thúc</th>
+                <th>Trạng thái</th>
+                <th>Tên sảnh</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var lich in Model.hopDong.LichDatSanhs)
+            {
+                <tr>
+                    <td>@lich.BatDau.ToString("dd/MM/yyyy HH:mm")</td>
+                    <td>@lich.KetThuc.ToString("dd/MM/yyyy HH:mm")</td>
+                    <td>@lich.TrangThai</td>
+                    <td>@lich.Sanh?.TenSanh</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>Không có lịch đặt sảnh.</p>
+}
+
+<h4>Chi tiết món ăn đặt tiệc</h4>
+@if (Model.hopDong.ChiTietDatTiecs != null && Model.hopDong.ChiTietDatTiecs.Any())
+{
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Món ăn</th>
+                <th>Số lượng</th>
+                <th>Đơn giá</th>
+                <th>Thành tiền</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.hopDong.ChiTietDatTiecs)
+            {
+                <tr>
+                    <td>@item.MonAn?.TenMon</td>
+                    <td>@item.SoLuong</td>
+                    <td>@FormatVND(item.MonAn?.DonGia ?? 0)</td>
+                    <td>@FormatVND(item.SoLuong * (item.MonAn?.DonGia ?? 0))</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <div class="text-end">
+        <strong>Tổng tiền món ăn: @FormatVND(Model.TienMonAn)</strong>
+    </div>
+}
+else
+{
+    <p>Không có món ăn được đặt.</p>
+}
+
+<hr />
+<h4 class="mt-4">Tổng kết thanh toán</h4>
+<ul>
+    <li>Tiền sảnh: @FormatVND(Model.TienSanh)</li>
+    <li>Tiền món ăn: @FormatVND(Model.TienMonAn)</li>
+    <li>Tiền dịch vụ: @FormatVND(Model.TienDichVu)</li>
+    <li>Tiền cọc: @FormatVND(Model.TienCoc)</li>
+    <li><strong>Tổng cộng: @FormatVND(Model.TongTien())</strong></li>
+</ul>
+
+<div class="mt-4">
+    <a asp-action="ExportHoaDonToPdf" asp-route-id="@Model.MaHD" class="btn btn-danger">
+        Xuất hóa đơn PDF
+    </a>
+</div>

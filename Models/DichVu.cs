@@ -15,6 +15,6 @@ namespace Sheraton.Models
         public string MoTa { get; set; }
 
         // Navigation properties
-        public ICollection<ChiTietDichVu> ChiTietDichVus { get; set; } = new List<ChiTietDichVu>();
+        public ICollection<HopDong> HopDongs { get; set; } = new List<HopDong>();
     }
 }

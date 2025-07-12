@@ -14,14 +14,17 @@ namespace Sheraton.Data
         public DbSet<Models.DatHang> DatHangs { get; set; }
         public DbSet<Models.LichDatSanh> LichDatSanhs { get; set; }
         public DbSet<Models.ChiTietDatTiec> ChiTietDatTiecs { get; set; }
-        public DbSet<Models.ChiTietDichVu> ChiTietDichVus { get; set; }
         public DbSet<Models.PhanCong> PhanCongs { get; set; }
         public DbSet<Models.SanhTiec> SanhTiecs { get; set; }
         public DbSet<Models.DichVu> DichVus { get; set; }
         public DbSet<Models.MonAn> MonAns { get; set; }
-
+        public DbSet<Models.BangLuong> BangLuongs { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<BangLuong>()
+                .HasOne(bl => bl.NhanVien)
+                .WithMany(nv => nv.BangLuongs)
+                .HasForeignKey(bl => bl.MaNV);
             // ChiTietDatTiec -> MonAn
             modelBuilder.Entity<ChiTietDatTiec>()
                 .HasOne(ct => ct.MonAn)
@@ -34,20 +37,6 @@ namespace Sheraton.Data
                 .HasOne(ct => ct.HopDong)
                 .WithMany(hd => hd.ChiTietDatTiecs) 
                 .HasForeignKey(ct => ct.MaHD)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            // ChiTietDichVu -> HopDong
-            modelBuilder.Entity<ChiTietDichVu>()
-                .HasOne(ct => ct.HopDong)
-                .WithMany(hd => hd.ChiTietDichVus)
-                .HasForeignKey(ct => ct.MaHD)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            // ChiTietDichVu -> DichVu
-            modelBuilder.Entity<ChiTietDichVu>()
-                .HasOne(ct => ct.DichVu)
-                .WithMany(dv => dv.ChiTietDichVus)
-                .HasForeignKey(ct => ct.MaDV)
                 .OnDelete(DeleteBehavior.Restrict);
 
             // HopDong -> NhanVien
@@ -63,6 +52,14 @@ namespace Sheraton.Data
                 .WithMany(kh => kh.HopDongs)
                 .HasForeignKey(hd => hd.MaKH)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            //HopDong -> DichVu
+            modelBuilder.Entity<HopDong>()
+                .HasOne(hd => hd.DichVu)
+                .WithMany(dv => dv.HopDongs)
+                .HasForeignKey(hd => hd.MaDV)
+                .OnDelete(DeleteBehavior.Restrict);
+
 
             // LichDatSanh -> HopDong
             modelBuilder.Entity<LichDatSanh>()
@@ -93,8 +90,6 @@ namespace Sheraton.Data
                 .OnDelete(DeleteBehavior.Restrict);
 
             // Khai báo các entity không có khóa chính nếu cần
-            modelBuilder.Entity<ChiTietDichVu>()
-                .HasKey(ct => new { ct.MaHD, ct.MaDV });
             modelBuilder.Entity<ChiTietDatTiec>()
                 .HasKey(ct => new { ct.MaHD, ct.MaMon });
             modelBuilder.Entity<PhanCong>()
@@ -105,8 +100,8 @@ namespace Sheraton.Data
             modelBuilder.Entity<HopDong>().Property(hd => hd.TienCoc).HasPrecision(18, 2);
             modelBuilder.Entity<MonAn>().Property(ma => ma.DonGia).HasPrecision(18, 2);
             modelBuilder.Entity<SanhTiec>().Property(st => st.Gia).HasPrecision(18, 2);
-
-
+            modelBuilder.Entity<BangLuong>().Property(st => st.TongGioLam).HasPrecision(18, 2);
+            modelBuilder.Entity<BangLuong>().Property(st => st.TongLuong).HasPrecision(18, 2);
         }
 
     }
