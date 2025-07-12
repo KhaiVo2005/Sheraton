@@ -1,6 +1,8 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Sheraton.Data;
-using Microsoft.AspNetCore.Identity;
+using Sheraton.Models.ViewModel;
+using VNPAY.NET;
 
 var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("SheratonContextConnection") ?? throw new InvalidOperationException("Connection string 'SheratonContextConnection' not found.");;
@@ -12,6 +14,11 @@ builder.Services.AddDbContext<SheratonDbContext>(opts => {
     opts.UseSqlServer(
     builder.Configuration["ConnectionStrings:SheratonConnection"]);
 });
+
+builder.Services.Configure<VnpayOptions>(
+    builder.Configuration.GetSection("Vnpay")
+);
+
 
 var app = builder.Build();
 

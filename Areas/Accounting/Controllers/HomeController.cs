@@ -77,20 +77,15 @@ namespace Sheraton.Areas.Accounting.Controllers
             var hopDongs = await _context.HopDongs
                 .Include(h => h.ChiTietDatTiecs).ThenInclude(c => c.MonAn)
                 .Include(h => h.ChiTietDichVus).ThenInclude(c => c.DichVu)
+                .Include(h => h.LichDatSanhs).ThenInclude(l => l.Sanh)
                 .Include(h => h.KhachHang)
                 .Include(h => h.NhanVien)
-                .ToListAsync();
-
-            var lichDatSanhs = await _context.LichDatSanhs
-                .Include(l => l.Sanh)
                 .ToListAsync();
 
             var list = new List<HoaDon>();
 
             foreach (var hd in hopDongs)
             {
-                var lichDatSanh = lichDatSanhs.FirstOrDefault(l => l.MaHD == hd.MaHD);
-                if (lichDatSanh == null) continue;
                 var hoaDon = new HoaDon
                 {
                     MaHD = hd.MaHD,
@@ -98,7 +93,7 @@ namespace Sheraton.Areas.Accounting.Controllers
                     TenNhanVien = hd.NhanVien.TenNV,
                     NgayKy = hd.NgayKy,
                     TienCoc = hd.TienCoc,
-                    TienSanh = lichDatSanh.Sanh?.Gia ?? 0,
+                    TienSanh = hd.LichDatSanhs.Sum(c => c.Sanh.Gia),
                     TienMonAn = hd.ChiTietDatTiecs.Sum(c => c.SoLuong * (c.MonAn?.DonGia ?? 0)),
                     TienDichVu = hd.ChiTietDichVus.Sum(c => c.SoLuong * (c.DichVu?.DonGia ?? 0)),
                     TrangThai = hd.TrangThai
@@ -107,15 +102,68 @@ namespace Sheraton.Areas.Accounting.Controllers
             }
             return View(list);
         }
-        public IActionResult CapNhapTrangThaiHoaDon(Guid maHD)
+
+        [HttpPost]
+        public IActionResult XuLyThanhToan(Guid maHD, string hinhThuc)
         {
-            var hopDong = _context.HopDongs.Find(maHD);
-            if (hopDong.TrangThai == "Chưa thanh toán")
+            if (hinhThuc == "TrucTiep")
             {
-                hopDong.TrangThai = "Đã thanh toán";
-                _context.SaveChanges();
+                var hopDong = _context.HopDongs.Find(maHD);
+                if (hopDong != null && hopDong.TrangThai == "Chưa thanh toán")
+                {
+                    hopDong.TrangThai = "Đã thanh toán";
+                    _context.SaveChanges();
+                }
+
+                return RedirectToAction("ChiTietHoaDon", new { maHD });
             }
-            return RedirectToAction("QuanLyHoaDon");
+            else if (hinhThuc == "Online")
+            {
+                var hopDong = _context.HopDongs
+                    .Include(h => h.ChiTietDatTiecs).ThenInclude(c => c.MonAn)
+                    .Include(h => h.ChiTietDichVus).ThenInclude(c => c.DichVu)
+                    .Include(h => h.LichDatSanhs).ThenInclude(l => l.Sanh)
+                    .Include(h => h.KhachHang)
+                    .Include(h => h.NhanVien)
+                    .FirstOrDefault(h => h.MaHD == maHD);
+
+                if (hopDong == null) return NotFound();
+
+                var TienCoc = hopDong.TienCoc;
+                var TienSanh = hopDong.LichDatSanhs.Sum(c => c.Sanh.Gia);
+                var TienMonAn = hopDong.ChiTietDatTiecs.Sum(c => c.SoLuong * (c.MonAn?.DonGia ?? 0));
+                var TienDichVu = hopDong.ChiTietDichVus.Sum(c => c.SoLuong * (c.DichVu?.DonGia ?? 0));
+
+                decimal tongTien = TienCoc + TienSanh + TienMonAn + TienDichVu;
+
+                string description = $"Thanh toan HD: {hopDong.MaHD}";
+
+                using (var client = new HttpClient())
+                {
+                    var url = $"https://localhost:7136/api/Vnpay/CreatePaymentUrl?moneyToPay={tongTien}&description={Uri.EscapeDataString(description)}&maHD={hopDong.MaHD}";
+                    var paymentUrl = client.GetStringAsync(url).Result;
+                    return Redirect(paymentUrl); 
+                }
+
+            }
+
+            return RedirectToAction("ChiTietHoaDon", new { maHD });
+        }
+
+
+        public async Task<IActionResult> ChiTietHoaDon(Guid maHD)
+        {
+            var hopDong = await _context.HopDongs
+                .Include(h => h.KhachHang)
+                .Include(h => h.NhanVien)
+                .Include(h => h.LichDatSanhs)
+                .FirstOrDefaultAsync(m => m.MaHD == maHD);
+            if (hopDong == null)
+            {
+                return NotFound();
+            }
+
+            return View(hopDong);
         }
     }
 }
