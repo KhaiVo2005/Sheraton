@@ -11,23 +11,23 @@ using Sheraton.Models;
 namespace Sheraton.Areas.Banquet.Controllers
 {
     [Area("Banquet")]
-    public class HopDongsController : Controller
+    public class SuKiensController : Controller
     {
         private readonly SheratonDbContext _context;
 
-        public HopDongsController(SheratonDbContext context)
+        public SuKiensController(SheratonDbContext context)
         {
             _context = context;
         }
 
-        // GET: Banquet/HopDongs
+        // GET: Banquet/SuKiens
         public async Task<IActionResult> Index()
         {
-            var sheratonDbContext = _context.HopDongs.Include(h => h.KhachHang).Include(h => h.NhanVien);
+            var sheratonDbContext = _context.HopDongs.Include(h => h.DichVu).Include(h => h.KhachHang).Include(h => h.NhanVien);
             return View(await sheratonDbContext.ToListAsync());
         }
 
-        // GET: Banquet/HopDongs/Details/5
+        // GET: Banquet/SuKiens/Details/5
         public async Task<IActionResult> Details(Guid? id)
         {
             if (id == null)
@@ -36,6 +36,7 @@ namespace Sheraton.Areas.Banquet.Controllers
             }
 
             var hopDong = await _context.HopDongs
+                .Include(h => h.DichVu)
                 .Include(h => h.KhachHang)
                 .Include(h => h.NhanVien)
                 .FirstOrDefaultAsync(m => m.MaHD == id);
@@ -47,20 +48,21 @@ namespace Sheraton.Areas.Banquet.Controllers
             return View(hopDong);
         }
 
-        // GET: Banquet/HopDongs/Create
+        // GET: Banquet/SuKiens/Create
         public IActionResult Create()
         {
+            ViewData["MaDV"] = new SelectList(_context.DichVus, "MaDV", "MoTa");
             ViewData["MaKH"] = new SelectList(_context.KhachHangs, "MaKH", "Email");
             ViewData["MaNV"] = new SelectList(_context.NhanViens, "MaNV", "ChucVu");
             return View();
         }
 
-        // POST: Banquet/HopDongs/Create
+        // POST: Banquet/SuKiens/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("MaHD,NgayKy,TienCoc,TrangThai,MaKH,MaNV")] HopDong hopDong)
+        public async Task<IActionResult> Create([Bind("MaHD,NgayKy,TienCoc,SoLuong,TrangThai,PTTT,MaKH,MaNV,MaDV")] HopDong hopDong)
         {
             if (ModelState.IsValid)
             {
@@ -69,12 +71,13 @@ namespace Sheraton.Areas.Banquet.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["MaDV"] = new SelectList(_context.DichVus, "MaDV", "MoTa", hopDong.MaDV);
             ViewData["MaKH"] = new SelectList(_context.KhachHangs, "MaKH", "Email", hopDong.MaKH);
             ViewData["MaNV"] = new SelectList(_context.NhanViens, "MaNV", "ChucVu", hopDong.MaNV);
             return View(hopDong);
         }
 
-        // GET: Banquet/HopDongs/Edit/5
+        // GET: Banquet/SuKiens/Edit/5
         public async Task<IActionResult> Edit(Guid? id)
         {
             if (id == null)
@@ -87,17 +90,18 @@ namespace Sheraton.Areas.Banquet.Controllers
             {
                 return NotFound();
             }
+            ViewData["MaDV"] = new SelectList(_context.DichVus, "MaDV", "MoTa", hopDong.MaDV);
             ViewData["MaKH"] = new SelectList(_context.KhachHangs, "MaKH", "Email", hopDong.MaKH);
             ViewData["MaNV"] = new SelectList(_context.NhanViens, "MaNV", "ChucVu", hopDong.MaNV);
             return View(hopDong);
         }
 
-        // POST: Banquet/HopDongs/Edit/5
+        // POST: Banquet/SuKiens/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("MaHD,NgayKy,TienCoc,TrangThai,MaKH,MaNV")] HopDong hopDong)
+        public async Task<IActionResult> Edit(Guid id, [Bind("MaHD,NgayKy,TienCoc,SoLuong,TrangThai,PTTT,MaKH,MaNV,MaDV")] HopDong hopDong)
         {
             if (id != hopDong.MaHD)
             {
@@ -124,12 +128,13 @@ namespace Sheraton.Areas.Banquet.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["MaDV"] = new SelectList(_context.DichVus, "MaDV", "MoTa", hopDong.MaDV);
             ViewData["MaKH"] = new SelectList(_context.KhachHangs, "MaKH", "Email", hopDong.MaKH);
             ViewData["MaNV"] = new SelectList(_context.NhanViens, "MaNV", "ChucVu", hopDong.MaNV);
             return View(hopDong);
         }
 
-        // GET: Banquet/HopDongs/Delete/5
+        // GET: Banquet/SuKiens/Delete/5
         public async Task<IActionResult> Delete(Guid? id)
         {
             if (id == null)
@@ -138,6 +143,7 @@ namespace Sheraton.Areas.Banquet.Controllers
             }
 
             var hopDong = await _context.HopDongs
+                .Include(h => h.DichVu)
                 .Include(h => h.KhachHang)
                 .Include(h => h.NhanVien)
                 .FirstOrDefaultAsync(m => m.MaHD == id);
@@ -149,7 +155,7 @@ namespace Sheraton.Areas.Banquet.Controllers
             return View(hopDong);
         }
 
-        // POST: Banquet/HopDongs/Delete/5
+        // POST: Banquet/SuKiens/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)

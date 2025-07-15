@@ -32,13 +32,13 @@ namespace Sheraton
 
             if (role == "Banquet")
             {
-                menus.Add(new MenuItem { Area = "Banquet", Controller = "HopDongs", Action = "getHopDong", Icon = "fa-calendar-check", Title = "Quản lý sự kiện" });
+                menus.Add(new MenuItem { Area = "Banquet", Controller = "SuKiens", Action = "Index", Icon = "fa-calendar-check", Title = "Quản lý sự kiện" });
                 menus.Add(new MenuItem { Area = "Banquet", Controller = "SanhTiecs", Action = "getSanhTiec", Icon = "fa-door-open", Title = "Quản lý sảnh" });
-                menus.Add(new MenuItem { Area = "Banquet", Controller = "DichVu", Action = "Index", Icon = "fa-bell-concierge", Title = "Quản lý dịch vụ" });
+                menus.Add(new MenuItem { Area = "Banquet", Controller = "DichVus", Action = "getDichVu", Icon = "fa-bell-concierge", Title = "Quản lý dịch vụ" });
             }
             else if (role == "Sale")
             {
-                menus.Add(new MenuItem { Area = "Sale", Controller = "HopDongs", Action = "getHopDong", Icon = "fa-clipboard-list", Title = "Quản lý đặt tiệc" });
+                menus.Add(new MenuItem { Area = "Sale", Controller = "HopDongs", Action = "getHopDong", Icon = "fa-clipboard-list", Title = "Quản lý hợp đồng" });
                 menus.Add(new MenuItem { Area = "Sale", Controller = "KhachHangs", Action = "getKhachHang", Icon = "fa-user-friends", Title = "Quản lý khách hàng" });
             }
             else if (role == "HumanResources")

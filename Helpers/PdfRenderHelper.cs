@@ -40,7 +40,7 @@ namespace Sheraton.Helpers
             };
 
             var tempData = new TempDataDictionary(controller.HttpContext, _tempDataProvider);
-
+            
             var viewContext = new ViewContext(actionContext, viewResult.View, viewData, tempData, sw, new HtmlHelperOptions());
 
             await viewResult.View.RenderAsync(viewContext);

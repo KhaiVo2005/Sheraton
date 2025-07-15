@@ -1,22 +1,106 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
-    Layout = "~/Views/Shared/_LayoutHome.cshtml";
-}
-<div class="login-container">
-    <div class="brand">Sheraton</div>
-    <h2>Đăng nhập hệ thống</h2>
-    <form asp-action="Login" asp-controller="Account" method="post">
-        <div class="mb-3">
-            <label for="username" class="form-label">Tên đăng nhập</label>
-            <input type="text" class="form-control" id="username" name="Username" required>
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta charset="utf-8" />
+    <title>Sheraton Hotels</title>
+    <link rel="stylesheet" href="~/css/Globals.css" />
+    <link rel="stylesheet" href="~/css/style.css" />
+</head>
+<body>
+    <header class="main-header">
+        <div class="header-gradient">
+            <div class="header-content">
+                <nav class="main-nav">
+                    <ul>
+                        <li><a href="#">DESTINATIONS</a></li>
+                        <li><a href="#">EXPERIENCE</a></li>
+                        <li><a href="#">SHERATON COLLECTIVE</a></li>
+                        <li><a href="#">STORE</a></li>
+                    </ul>
+                </nav>
+                <div class="header-actions">
+                    <div class="header-action-item">
+                        <span>ENGLISH</span>
+                    </div>
+                    <div class="header-action-item">
+                        <span>SIGN IN OR JOIN</span>
+                    </div>
+                    <div class="marriott-bonvoy">
+                        <span>MARROTT</span>
+                        <span>BONVOY</span>
+                    </div>
+                </div>
+            </div>
+            <div class="header-divider"></div>
         </div>
-        <div class="mb-3">
-            <label for="password" class="form-label">Mật khẩu</label>
-            <input type="password" class="form-control" id="password" name="Password" required>
+    </header>
+    <main>
+        <section class="hero">
+            <img src="~/image/shephxgplo-1002916-2880x1620-1536x864-1.png" alt="Hero Background" class="hero-image" />
+        </section>
+        <section class="intro">
+            <h2>Sheraton Hotels</h2>
+            <p>At the Heart of Communities For Over 80 Years</p>
+            <img src="~/image/image-2.png" alt="Sheraton Hotels" />
+        </section>
+        <section class="better-together">
+            <h2>Better Together</h2>
+            <p>CONNECTING PEOPLE AT OVER 400 LOCATIONS ACROSS THE GLOBE</p>
+            <img src="~/image/image-1.png" alt="Sheraton Hotel" />
+        </section>
+        <section class="destinations">
+            <h2>Sheraton Is Everywhere You Want To Be</h2>
+            <p>New Gathering Spaces Await; Discover Our Hotels</p>
+            <img src="~/image/image-2.png" alt="Sheraton Destinations" />
+        </section>
+        <section class="history">
+            <h2>History In The Making</h2>
+            <p>Our Past, Present, And Exciting Travel Future</p>
+            <div class="history-images">
+                <img src="~/image/image-3.png" alt="Sheraton History" />
+                <div class="history-overlay"></div>
+            </div>
+        </section>
+        <section class="work-together">
+            <img src="~/image/image-5.png" alt="Work Together" />
+            <div class="work-content">
+                <h2>The Best Work Is Done Together</h2>
+                <p>
+                    We are your connection point. With a variety of venues and flexible meetings spaces in a multitude of
+                    destinations, we'll help you make the most of your time together.
+                </p>
+                <a href="#" class="learn-more">Learn more &gt;</a>
+            </div>
+        </section>
+        <section class="community">
+            <h2>Join Our Community</h2>
+            <img src="~/image/image-6.png" alt="Sheraton Community" />
+            <img src="~/image/image-10.png" alt="Community Extra" />
+        </section>
+    </main>
+    <footer class="main-footer">
+        <div class="footer-contact">
+            <div class="footer-address">123 Main Street, District 1, Ho Chi Minh City, Vietnam</div>
+            <div class="footer-contact-info">
+                <span>Email: <a href="mailto:info@sheraton.com">info@sheraton.com</a></span> |
+                <span>Tel: <a href="tel:+84281234567">(+84) 28 1234 567</a></span>
+            </div>
+            <div class="footer-links">
+                <a href="#">About Us</a>
+                <a href="#">Terms of Use</a>
+                <a href="#">Privacy Statement</a>
+            </div>
+            <div class="footer-copyright">
+                © 2025 Sheraton Hotels. All Rights Reserved.
+            </div>
         </div>
-        <button type="submit" class="btn btn-login mt-3">Đăng nhập</button>
-    </form>
-    <p class="text-muted mt-3">© @DateTime.Now.Year Sheraton Management</p>
-</div>
+    </footer>
+    <div class="fixed-contact-btn">
+        <img src="~/image/logo.png" alt="Contact" />
+        <div class="contact-tooltip">
+            <span>Liên hệ: (+84) 28 1234 567</span>
+        </div>
+    </div>
+</body>
+</html>

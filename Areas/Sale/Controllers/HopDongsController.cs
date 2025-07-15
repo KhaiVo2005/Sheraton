@@ -43,7 +43,7 @@ namespace Sheraton.Areas.Sale.Controllers
                 .Include(h => h.KhachHang)
                 .Include(h => h.NhanVien)
                 .Include(h => h.DichVu)
-                .Include(h => h.LichDatSanhs)
+                .Include(h => h.LichDatSanhs).ThenInclude(h => h.Sanh)
                 .FirstOrDefaultAsync(m => m.MaHD == id);
             if (hopDong == null)
             {
@@ -219,6 +219,16 @@ namespace Sheraton.Areas.Sale.Controllers
             ViewData["MaKH"] = new SelectList(_context.KhachHangs, "MaKH", "TenKH", hopDong.MaKH);
             ViewData["MaNV"] = new SelectList(_context.NhanViens, "MaNV", "ChucVu", hopDong.MaNV);
             ViewData["MaDV"] = new SelectList(_context.NhanViens, "MaDV", "TenDV", hopDong.MaNV);
+
+            ViewBag.DanhSachSanh = _context.SanhTiecs.ToList();
+
+            ViewBag.LichDaDat = _context.LichDatSanhs
+                .Where(l => l.MaHD != id)
+                .Select(l => new {
+                    maSanh = l.MaSanh,
+                    batDau = l.BatDau.ToString("o"),
+                    ketThuc = l.KetThuc.ToString("o")
+                }).ToList();
             return View(hopDong);
         }
 
