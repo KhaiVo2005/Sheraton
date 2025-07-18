@@ -21,6 +21,11 @@ builder.Services.Configure<VnpayOptions>(
     builder.Configuration.GetSection("Vnpay")
 );
 
+builder.Services.AddServerSideBlazor();
+
+builder.Services.AddRazorComponents().AddInteractiveServerComponents();
+
+builder.Services.AddControllers();
 
 var app = builder.Build();
 
@@ -44,6 +49,8 @@ app.MapStaticAssets();
 app.MapRazorPages()
    .WithStaticAssets();
 
+app.MapBlazorHub();
+
 app.MapControllerRoute(
     name: "area",
     pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}"
@@ -53,6 +60,8 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}"
 );
+
+app.MapFallbackToPage("/_Host");
 
 using (var scope = app.Services.CreateScope())
 {

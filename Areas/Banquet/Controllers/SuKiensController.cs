@@ -39,7 +39,9 @@ namespace Sheraton.Areas.Banquet.Controllers
                 .Include(h => h.DichVu)
                 .Include(h => h.KhachHang)
                 .Include(h => h.NhanVien)
+                .Include(h => h.Ratings)
                 .FirstOrDefaultAsync(m => m.MaHD == id);
+
             if (hopDong == null)
             {
                 return NotFound();

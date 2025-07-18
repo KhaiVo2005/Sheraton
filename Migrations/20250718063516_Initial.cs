@@ -82,7 +82,7 @@ namespace Sheraton.Migrations
                     MoTa = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Gia = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
                     TrangThai = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    HinhAnh = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    HinhAnh = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -221,6 +221,28 @@ namespace Sheraton.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Ratings",
+                columns: table => new
+                {
+                    RatingId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Score = table.Column<int>(type: "int", nullable: false),
+                    Comment = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    MaHD = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Ratings", x => x.RatingId);
+                    table.ForeignKey(
+                        name: "FK_Ratings_HopDongs_MaHD",
+                        column: x => x.MaHD,
+                        principalTable: "HopDongs",
+                        principalColumn: "MaHD",
+                        onDelete: ReferentialAction.SetNull);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "PhanCongs",
                 columns: table => new
                 {
@@ -290,6 +312,11 @@ namespace Sheraton.Migrations
                 name: "IX_PhanCongs_MaNV",
                 table: "PhanCongs",
                 column: "MaNV");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Ratings_MaHD",
+                table: "Ratings",
+                column: "MaHD");
         }
 
         /// <inheritdoc />
@@ -306,6 +333,9 @@ namespace Sheraton.Migrations
 
             migrationBuilder.DropTable(
                 name: "PhanCongs");
+
+            migrationBuilder.DropTable(
+                name: "Ratings");
 
             migrationBuilder.DropTable(
                 name: "MonAns");

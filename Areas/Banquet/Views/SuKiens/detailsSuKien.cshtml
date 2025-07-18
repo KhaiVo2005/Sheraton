@@ -59,6 +59,27 @@
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.DichVu.MoTa)
         </dd>
+        <dt class="col-sm-2">
+            Đánh giá
+        </dt>
+        <dd class="col-sm-10">
+            @if (Model.Ratings != null && Model.Ratings.Any())
+            {
+                <ul class="list-group">
+                    @foreach (var r in Model.Ratings)
+                    {
+                        <li class="list-group-item">
+                            <strong>⭐ @r.Score:</strong> @r.Comment <br />
+                            <small class="text-muted">vào lúc @r.CreatedAt.ToString("dd/MM/yyyy HH:mm")</small>
+                        </li>
+                    }
+                </ul>
+            }
+            else
+            {
+                <span class="text-muted fst-italic">Chưa có đánh giá</span>
+            }
+        </dd>
     </dl>
 </div>
 <div>

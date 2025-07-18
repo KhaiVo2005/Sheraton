@@ -19,6 +19,8 @@ namespace Sheraton.Data
         public DbSet<Models.DichVu> DichVus { get; set; }
         public DbSet<Models.MonAn> MonAns { get; set; }
         public DbSet<Models.BangLuong> BangLuongs { get; set; }
+        public DbSet<Models.Rating> Ratings { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<BangLuong>()
@@ -94,6 +96,12 @@ namespace Sheraton.Data
                 .HasKey(ct => new { ct.MaHD, ct.MaMon });
             modelBuilder.Entity<PhanCong>()
                 .HasKey(ct => new { ct.MaLDS, ct.MaNV });
+
+            modelBuilder.Entity<Rating>()
+                .HasOne(r => r.HopDong)
+                .WithMany(hd => hd.Ratings)
+                .HasForeignKey(r => r.MaHD)
+                .OnDelete(DeleteBehavior.SetNull);
 
             // Precision cho các decimal
             modelBuilder.Entity<DichVu>().Property(dv => dv.DonGia).HasPrecision(18, 2);

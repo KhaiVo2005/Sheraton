@@ -1,0 +1,79 @@
+﻿@page "/danhgia"
+@using Microsoft.JSInterop
+@using Sheraton.Models
+@inject HttpClient Http
+@using Microsoft.AspNetCore.Components.Web
+@using Microsoft.AspNetCore.Components
+@using Microsoft.AspNetCore.Components.Forms
+@using Microsoft.AspNetCore.Components.Routing
+@inject NavigationManager NavManager
+@inject IJSRuntime JS
+
+@code {
+    [Parameter] public string? MaHD { get; set; }
+
+    private Rating rating = new Rating();
+    private string? message;
+
+    protected override void OnInitialized()
+    {
+        var uri = NavManager.ToAbsoluteUri(NavManager.Uri);
+        if (Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery(uri.Query).TryGetValue("MaHD", out var mahdValue))
+        {
+            MaHD = mahdValue;
+            if (Guid.TryParse(MaHD, out var parsedGuid))
+            {
+                rating.MaHD = parsedGuid;
+            }
+        }
+    }
+
+    public async Task SubmitRating()
+    {
+        rating.CreatedAt = DateTime.Now;
+
+        try
+        {
+
+            var response = await Http.PostAsJsonAsync("https://localhost:7136/api/Ratings", rating);
+            if (response.IsSuccessStatusCode)
+            {
+                message = "✅ Gửi đánh giá thành công!";
+                rating = new Rating();
+                if (!string.IsNullOrEmpty(MaHD) && Guid.TryParse(MaHD, out var parsedGuid))
+                    rating.MaHD = parsedGuid;
+                await Task.Delay(1000); // Tuỳ chọn: delay 1s để người dùng thấy thông báo
+
+                // Điều hướng về trang quản lý sự kiện
+                await JS.InvokeVoidAsync("eval", "window.location.href = '/Banquet/SuKiens/getSuKien'");
+            }
+            else
+            {
+                message = $"❌ Lỗi: {response.StatusCode}";
+            }
+        }
+        catch (Exception ex)
+        {
+            message = $"❌ Đã xảy ra lỗi: {ex.Message}";
+        }
+    }
+}
+
+<h3>Gửi đánh giá cho hợp đồng</h3>
+
+<div class="mb-3">
+    <label>Điểm (1-5):</label>
+    <input type="number" class="form-control" @bind="rating.Score" min="1" max="5" />
+</div>
+
+<div class="mb-3">
+    <label>Nhận xét:</label>
+    <textarea class="form-control" @bind="rating.Comment" placeholder="Nhận xét của bạn..."></textarea>
+</div>
+
+<button type="button" class="btn btn-primary" @onclick="SubmitRating">Gửi đánh giá</button>
+
+@if (!string.IsNullOrWhiteSpace(message))
+{
+    <div class="alert alert-info mt-3">@message</div>
+}

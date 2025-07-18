@@ -25,10 +25,12 @@ namespace Sheraton.Models
         public NhanVien? NhanVien { get; set; }
         public Guid MaDV { get; set; }
         public DichVu? DichVu { get; set; }
+        
 
         // Navigation properties
         public ICollection<LichDatSanh> LichDatSanhs { get; set; } = new List<LichDatSanh>();
         public ICollection<ChiTietDatTiec> ChiTietDatTiecs { get; set; } = new List<ChiTietDatTiec>();
+        public ICollection<Rating> Ratings { get; set; } = new List<Rating>();
 
     }
 }

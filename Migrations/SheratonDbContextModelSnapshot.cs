@@ -300,6 +300,34 @@ namespace Sheraton.Migrations
                     b.ToTable("PhanCongs");
                 });
 
+            modelBuilder.Entity("Sheraton.Models.Rating", b =>
+                {
+                    b.Property<int>("RatingId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RatingId"));
+
+                    b.Property<string>("Comment")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("MaHD")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Score")
+                        .HasColumnType("int");
+
+                    b.HasKey("RatingId");
+
+                    b.HasIndex("MaHD");
+
+                    b.ToTable("Ratings");
+                });
+
             modelBuilder.Entity("Sheraton.Models.SanhTiec", b =>
                 {
                     b.Property<Guid>("MaSanh")
@@ -311,7 +339,6 @@ namespace Sheraton.Migrations
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("HinhAnh")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("MoTa")
@@ -436,6 +463,16 @@ namespace Sheraton.Migrations
                     b.Navigation("NhanVien");
                 });
 
+            modelBuilder.Entity("Sheraton.Models.Rating", b =>
+                {
+                    b.HasOne("Sheraton.Models.HopDong", "HopDong")
+                        .WithMany("Ratings")
+                        .HasForeignKey("MaHD")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("HopDong");
+                });
+
             modelBuilder.Entity("Sheraton.Models.DichVu", b =>
                 {
                     b.Navigation("HopDongs");
@@ -446,6 +483,8 @@ namespace Sheraton.Migrations
                     b.Navigation("ChiTietDatTiecs");
 
                     b.Navigation("LichDatSanhs");
+
+                    b.Navigation("Ratings");
                 });
 
             modelBuilder.Entity("Sheraton.Models.KhachHangg", b =>
