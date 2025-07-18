@@ -1,0 +1,49 @@
+﻿@page
+@model Sheraton.Areas.Banquet.Pages.DichVus.getDichVuModel
+@{
+    ViewData["Title"] = "Get Dich Vu";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-page="createDichVu">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Tên Dịch Vụ
+            </th>
+            <th>
+                Đơn Giá
+            </th>
+            <th>
+                Mô Tả
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.DichVus)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TenDV)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DonGia)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.MoTa)
+                </td>
+                <td>
+                    <a asp-page="updateDichVu" asp-route-id="@item.MaDV">Edit</a> |
+                    <a asp-page="detailsDichVu" asp-route-id="@item.MaDV">Details</a> |
+                    <a asp-page="deleteDichVu" asp-route-id="@item.MaDV">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

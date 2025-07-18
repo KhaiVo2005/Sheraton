@@ -1,0 +1,25 @@
+﻿@page "{id:Guid}"
+@model Sheraton.Areas.Banquet.Pages.DichVus.deleteDichVuModel
+@{
+    ViewData["Title"] = "Xoá dịch vụ";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Xác nhận xoá dịch vụ</h2>
+<hr />
+<dl class="row">
+    <dt class="col-sm-3">Tên dịch vụ</dt>
+    <dd class="col-sm-9">@Model.DichVu.TenDV</dd>
+
+    <dt class="col-sm-3">Đơn giá</dt>
+    <dd class="col-sm-9">@Model.DichVu.DonGia</dd>
+
+    <dt class="col-sm-3">Mô tả</dt>
+    <dd class="col-sm-9">@Model.DichVu.MoTa</dd>
+</dl>
+
+<form method="post">
+    <input type="hidden" asp-for="DichVu.MaDV" />
+    <button type="submit" class="btn btn-danger">Xoá</button>
+    <a asp-page="getDichVu" class="btn btn-secondary">Huỷ</a>
+</form>

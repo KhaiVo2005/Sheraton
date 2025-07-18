@@ -1,0 +1,46 @@
+﻿@page "{id:Guid}"
+@model Sheraton.Areas.Banquet.Pages.DichVus.updateDichVuModel
+@{
+    ViewData["Title"] = "Chỉnh sửa dịch vụ";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Chỉnh sửa dịch vụ</h2>
+<hr />
+<div class="row">
+    <div class="col-md-6">
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="DichVu.MaDV" />
+
+            <div class="form-group">
+                <label asp-for="DichVu.TenDV" class="control-label"></label>
+                <input asp-for="DichVu.TenDV" class="form-control" />
+                <span asp-validation-for="DichVu.TenDV" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="DichVu.DonGia" class="control-label"></label>
+                <input asp-for="DichVu.DonGia" class="form-control" />
+                <span asp-validation-for="DichVu.DonGia" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="DichVu.MoTa" class="control-label"></label>
+                <input asp-for="DichVu.MoTa" class="form-control" />
+                <span asp-validation-for="DichVu.MoTa" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mt-3">
+                <button type="submit" class="btn btn-primary">Lưu</button>
+                <a asp-page="getDichVu" class="btn btn-secondary">Huỷ</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
