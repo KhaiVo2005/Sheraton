@@ -17,6 +17,7 @@ namespace Sheraton.Models
         public decimal Gia { get; set; }
         [Required(ErrorMessage = "Trạng thái không được để trống")]
         public string TrangThai { get; set; }
+        public string? HinhAnh { get; set; }
 
         // Navigation properties
         public ICollection<LichDatSanh> LichDatSanhs { get; set; } = new List<LichDatSanh>();

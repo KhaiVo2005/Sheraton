@@ -32,7 +32,7 @@ namespace Sheraton
 
             if (role == "Banquet")
             {
-                menus.Add(new MenuItem { Area = "Banquet", Controller = "SuKiens", Action = "Index", Icon = "fa-calendar-check", Title = "Quản lý sự kiện" });
+                menus.Add(new MenuItem { Area = "Banquet", Controller = "SuKiens", Action = "getSuKien", Icon = "fa-calendar-check", Title = "Quản lý sự kiện" });
                 menus.Add(new MenuItem { Area = "Banquet", Controller = "SanhTiecs", Action = "getSanhTiec", Icon = "fa-door-open", Title = "Quản lý sảnh" });
                 menus.Add(new MenuItem { Area = "Banquet", Page = "/DichVus/getDichVu", Icon = "fa-bell-concierge", Title = "Quản lý dịch vụ" });
             }

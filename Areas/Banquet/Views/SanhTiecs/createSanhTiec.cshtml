@@ -1,58 +1,62 @@
-﻿@model Sheraton.Models.SanhTiec
+﻿    @model Sheraton.Models.SanhTiec
 
-@{
-    ViewData["Title"] = "Create";
-    Layout = "~/Views/Shared/_Layout.cshtml";
-}
+    @{
+        ViewData["Title"] = "Create";
+        Layout = "~/Views/Shared/_Layout.cshtml";
+    }
 
-<h1>Create</h1>
+    <h1>Create</h1>
 
-<h4>SanhTiec</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="createSanhTiec">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="TenSanh" class="control-label"></label>
-                <input asp-for="TenSanh" class="form-control" />
-                <span asp-validation-for="TenSanh" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="SucChua" class="control-label"></label>
-                <input asp-for="SucChua" class="form-control" />
-                <span asp-validation-for="SucChua" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="MoTa" class="control-label"></label>
-                <input asp-for="MoTa" class="form-control" />
-                <span asp-validation-for="MoTa" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Gia" class="control-label"></label>
-                <input asp-for="Gia" class="form-control" />
-                <span asp-validation-for="Gia" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="TrangThai" class="control-label">Trạng thái</label>
-                <select asp-for="TrangThai" class="form-control">
-                    <option value="">-- Chọn trạng thái --</option>
-                    <option value="Trống">Trống</option>
-                    <option value="Bảo trì">Bảo trì</option>
-                </select>
-                <span asp-validation-for="TrangThai" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
+    <h4>SanhTiec</h4>
+    <hr />
+    <div class="row">
+        <div class="col-md-4">
+        <form asp-action="createSanhTiec" enctype="multipart/form-data">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-group">
+                    <label asp-for="TenSanh" class="control-label"></label>
+                    <input asp-for="TenSanh" class="form-control" />
+                    <span asp-validation-for="TenSanh" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="SucChua" class="control-label"></label>
+                    <input asp-for="SucChua" class="form-control" />
+                    <span asp-validation-for="SucChua" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="MoTa" class="control-label"></label>
+                    <input asp-for="MoTa" class="form-control" />
+                    <span asp-validation-for="MoTa" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Gia" class="control-label"></label>
+                    <input asp-for="Gia" class="form-control" />
+                    <span asp-validation-for="Gia" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="TrangThai" class="control-label">Trạng thái</label>
+                    <select asp-for="TrangThai" class="form-control">
+                        <option value="">-- Chọn trạng thái --</option>
+                        <option value="Trống">Trống</option>
+                        <option value="Bảo trì">Bảo trì</option>
+                    </select>
+                    <span asp-validation-for="TrangThai" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label>Ảnh sảnh</label>
+                    <input type="file" name="ImageFile" class="form-control" accept="image/*" />
+                </div>
+                <div class="form-group">
+                    <input type="submit" value="Create" class="btn btn-primary" />
+                </div>
+            </form>
+        </div>
     </div>
-</div>
 
-<div>
-    <a asp-action="getSanhTiec">Back to List</a>
-</div>
+    <div>
+        <a asp-action="getSanhTiec">Back to List</a>
+    </div>
 
-@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-}
+    @section Scripts {
+        @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    }

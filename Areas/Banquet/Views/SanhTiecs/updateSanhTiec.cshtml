@@ -5,13 +5,13 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Edit</h1>
+<h1>Cập nhật</h1>
 
 <h4>SanhTiec</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="updateSanhTiec">
+        <form asp-action="updateSanhTiec" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="MaSanh" />
             <div class="form-group">
@@ -34,10 +34,23 @@
                 <input asp-for="Gia" class="form-control" />
                 <span asp-validation-for="Gia" class="text-danger"></span>
             </div>
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="TrangThai" /> @Html.DisplayNameFor(model => model.TrangThai)
-                </label>
+            <div class="form-group">
+                <label asp-for="TrangThai" class="control-label">Trạng thái</label>
+                <select asp-for="TrangThai" class="form-control">
+                    <option value="">-- Chọn trạng thái --</option>
+                    <option value="Trống">Trống</option>
+                    <option value="Bảo trì">Bảo trì</option>
+                </select>
+                <span asp-validation-for="TrangThai" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label>Ảnh hiện tại:</label><br />
+                <img src="@Url.Content(Model.HinhAnh)" alt="Hình ảnh sảnh" style="max-height: 200px;" />
+            </div>
+
+            <div class="form-group">
+                <label>Chọn ảnh mới:</label>
+                <input type="file" name="ImageFile" class="form-control" />
             </div>
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />

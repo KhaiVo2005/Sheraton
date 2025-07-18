@@ -1,0 +1,46 @@
+﻿@model IEnumerable<Sheraton.Models.HopDong>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Quản lý sự kiện</h1>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Ngày kí </th>
+            <th>Số lượng khách</th>
+            <th>Trạng thái</th>
+            <th>Khách hàng</th>
+            <th>Dịch vụ</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.NgayKy)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SoLuong)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TrangThai)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.KhachHang.Email)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DichVu.TenDV)
+            </td>
+            <td>
+                <a asp-action="updateSuKien" asp-route-id="@item.MaHD">Edit</a> |
+                <a asp-action="detailsSuKien" asp-route-id="@item.MaHD">Details</a> |
+                <a asp-action="detailsSuKien" asp-route-id="@item.MaHD">ThanhToan</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

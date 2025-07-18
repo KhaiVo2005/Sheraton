@@ -5,7 +5,7 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Index</h1>
+<h1>Quản lý Sảnh Tiệc</h1>
 
 <p>
     <a asp-action="createSanhTiec">Create New</a>
@@ -13,6 +13,7 @@
 <table class="table">
     <thead>
         <tr>
+            <th>Ảnh</th>
             <th>
                 @Html.DisplayNameFor(model => model.TenSanh)
             </th>
@@ -34,6 +35,9 @@
     <tbody>
 @foreach (var item in Model) {
         <tr>
+            <td>
+                <img src="@item.HinhAnh" alt="Ảnh sảnh" style="width: 100px; height: auto; border-radius: 5px;" />
+            </td>
             <td>
                 @Html.DisplayFor(modelItem => item.TenSanh)
             </td>
