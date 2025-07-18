@@ -1,0 +1,86 @@
+﻿body {
+    background-image: url('../image/background.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed; /* giữ cố định khi cuộn */
+    background-repeat: no-repeat;
+}
+
+.hall-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 30px;
+    padding: 40px;
+    max-width: 1400px;
+    margin: auto;
+}
+
+.hall-card {
+    background-color: #fff;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.08);
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+    .hall-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    }
+
+    .hall-card img {
+        width: 100%;
+        height: 220px;
+        object-fit: cover;
+    }
+
+.hall-content {
+    padding: 20px 25px;
+    flex: 1;
+}
+
+    .hall-content h2 {
+        font-size: 1.4rem;
+        margin: 0 0 15px;
+        color: #B76E79;
+    }
+
+.info-item {
+    margin-bottom: 10px;
+    font-size: 0.95rem;
+}
+
+    .info-item strong {
+        color: #444;
+        display: inline-block;
+        width: 100px;
+    }
+
+.button {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #B76E79;
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    margin-top: 15px;
+    font-weight: 600;
+    transition: background-color 0.2s ease;
+}
+
+    .button:hover {
+        background-color: #a05564;
+    }
+
+/* Mobile tweak */
+@media (max-width: 500px) {
+    .hall-card img {
+        height: 180px;
+    }
+
+    .hall-content h2 {
+        font-size: 1.2rem;
+    }
+}

@@ -12,7 +12,7 @@ using Sheraton.Data;
 namespace Sheraton.Migrations
 {
     [DbContext(typeof(SheratonDbContext))]
-    [Migration("20250712062647_Initial")]
+    [Migration("20250715044927_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -312,6 +312,10 @@ namespace Sheraton.Migrations
                     b.Property<decimal>("Gia")
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("HinhAnh")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("MoTa")
                         .IsRequired()

@@ -21,14 +21,14 @@ namespace Sheraton.Areas.Banquet.Controllers
         }
 
         // GET: Banquet/SuKiens
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> getSuKien()
         {
             var sheratonDbContext = _context.HopDongs.Include(h => h.DichVu).Include(h => h.KhachHang).Include(h => h.NhanVien);
             return View(await sheratonDbContext.ToListAsync());
         }
 
         // GET: Banquet/SuKiens/Details/5
-        public async Task<IActionResult> Details(Guid? id)
+        public async Task<IActionResult> detailsSuKien(Guid? id)
         {
             if (id == null)
             {
@@ -78,7 +78,7 @@ namespace Sheraton.Areas.Banquet.Controllers
         }
 
         // GET: Banquet/SuKiens/Edit/5
-        public async Task<IActionResult> Edit(Guid? id)
+        public async Task<IActionResult> updateSuKien(Guid? id)
         {
             if (id == null)
             {
@@ -101,7 +101,7 @@ namespace Sheraton.Areas.Banquet.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("MaHD,NgayKy,TienCoc,SoLuong,TrangThai,PTTT,MaKH,MaNV,MaDV")] HopDong hopDong)
+        public async Task<IActionResult> updateSuKien(Guid id, [Bind("MaHD,NgayKy,TienCoc,SoLuong,TrangThai,PTTT,MaKH,MaNV,MaDV")] HopDong hopDong)
         {
             if (id != hopDong.MaHD)
             {
@@ -126,7 +126,7 @@ namespace Sheraton.Areas.Banquet.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(getSuKien));
             }
             ViewData["MaDV"] = new SelectList(_context.DichVus, "MaDV", "MoTa", hopDong.MaDV);
             ViewData["MaKH"] = new SelectList(_context.KhachHangs, "MaKH", "Email", hopDong.MaKH);

@@ -1,0 +1,36 @@
+﻿@model IEnumerable<Sheraton.Models.SanhTiec>
+@{
+    Layout = "~/Views/Shared/_LayoutKhachHang.cshtml"; // hoặc _LayoutKhachHang.cshtml nếu dùng layout riêng
+    ViewData["Title"] = "Thông tin Sảnh Tiệc";
+}
+
+@section Styles {
+<link href="~/css/Hall_Infomation.css" rel="stylesheet" />
+    <style>
+        body {
+            background-image: url('@Url.Content("~/image/background7.jpg")');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            background-repeat: no-repeat;
+        }
+    </style>
+}
+<div class="hall-list">
+    @foreach (var sanh in Model)
+    {
+        <div class="hall-card">
+            <img src="@Url.Content(sanh.HinhAnh)" alt="Sảnh Tiệc Hình Ảnh" />
+            <div class="hall-content">
+                <h2>@sanh.TenSanh</h2>
+                <div class="info-item"><strong>Sức chứa:</strong> @sanh.SucChua</div>
+                <div class="info-item"><strong>Mô tả:</strong> @sanh.MoTa</div>
+                <div class="info-item"><strong>Giá:</strong> @sanh.Gia</div>
+                <div class="text-center">
+                    <a href="#dat-tiec" class="button">Liên Hệ Ngay</a>
+                </div>
+                
+            </div>
+        </div>
+    }
+</div>

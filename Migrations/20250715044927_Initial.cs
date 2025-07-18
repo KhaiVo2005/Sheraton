@@ -81,7 +81,8 @@ namespace Sheraton.Migrations
                     SucChua = table.Column<int>(type: "int", nullable: false),
                     MoTa = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Gia = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
-                    TrangThai = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    TrangThai = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    HinhAnh = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {

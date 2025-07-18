@@ -1,13 +1,66 @@
 ﻿<!DOCTYPE html>
-
-<html>
+<html lang="en">
 <head>
-    <meta name="viewport" content="width=device-width" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>@ViewBag.Title</title>
+
+    <!-- Font và Reset CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;400&family=Josefin+Slab:wght@600&display=swap" rel="stylesheet" />
+
+    <!-- CSS riêng -->
+    <link rel="stylesheet" href="~/css/Globals.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/style.css" asp-append-version="true" />
+    @RenderSection("Styles", required: false)
 </head>
 <body>
-    <div>
+    <header class="main-header">
+        <div class="header-gradient">
+            <div class="header-content">
+                <nav class="main-nav">
+                    <ul>
+                        <li><a href="/Home">HOME</a></li>
+                        <li><a href="#">EXPERIENCE</a></li>
+                        <li><a href="/Home/Product">HALL INFOMATION</a></li>
+                    </ul>
+                </nav>
+                <div class="header-actions">
+                    
+                    <div class="marriott-bonvoy">
+                        <span>MARRIOTT</span>
+                        <span>BONVOY</span>
+                    </div>
+                    <div class="header-action-item"><span>SIGN IN OR JOIN</span></div>
+                </div>
+            </div>
+            <div class="header-divider"></div>
+        </div>
+    </header>
+
+
+    <main>
         @RenderBody()
+    </main>
+
+    <footer class="main-footer">
+        <div class="footer-contact">
+            <div class="footer-address">123 Main Street, District 1, Ho Chi Minh City, Vietnam</div>
+            <div class="footer-contact-info">
+                <span>Email: <a href="mailto:info@sheraton.com">info@sheraton.com</a></span> |
+                <span>Tel: <a href="tel:+84281234567">(+84) 28 1234 567</a></span>
+            </div>
+            <div class="footer-copyright">
+                © 2025 Sheraton Hotels. All Rights Reserved.
+            </div>
+        </div>
+    </footer>
+
+    <div class="fixed-contact-btn">
+        <img src="~/image/logo.png" alt="Contact" />
+        <div class="contact-tooltip">
+            <span>Liên hệ: (+84) 28 1234 567</span>
+        </div>
     </div>
 </body>
 </html>

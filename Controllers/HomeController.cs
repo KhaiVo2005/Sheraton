@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Sheraton.Data;
 
 namespace Sheraton.Controllers
 {
@@ -7,6 +9,16 @@ namespace Sheraton.Controllers
         public IActionResult Index()
         {
             return View();
+        }
+        private readonly SheratonDbContext _context;
+
+        public HomeController(SheratonDbContext context)
+        {
+            _context = context;
+        }
+        public async Task<IActionResult> Product()
+        {
+            return View(await _context.SanhTiecs.ToListAsync());
         }
     }
 }

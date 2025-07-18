@@ -34,11 +34,11 @@ namespace Sheraton.Data
             if (!context.SanhTiecs.Any())
             {
                 context.SanhTiecs.AddRange(
-                    new SanhTiec { MaSanh = Guid.NewGuid(), TenSanh = "Sài Gòn - Đà Lạt", SucChua = 00, MoTa = "Sảnh lớn sang trọng", Gia = 20000000, TrangThai = "Trống" },
-                    new SanhTiec { MaSanh = Guid.NewGuid(), TenSanh = "Đà Nẵng - Huế", SucChua = 150, MoTa = "Sảnh nhỏ ấm cúng", Gia = 12000000, TrangThai = "Trống" },
-                    new SanhTiec { MaSanh = Guid.NewGuid(), TenSanh = "Sài Gòn - Hà Nội", SucChua = 200, MoTa = "Phong cách hoàng gia", Gia = 15000000, TrangThai = "Trống" },
-                    new SanhTiec { MaSanh = Guid.NewGuid(), TenSanh = "Nha Trang - Đà Lạt", SucChua = 100, MoTa = "Phù hợp tiệc thân mật", Gia = 9000000, TrangThai = "Trống" },
-                    new SanhTiec { MaSanh = Guid.NewGuid(), TenSanh = "Sài Gòn - Vũng Tàu", SucChua = 250, MoTa = "Đẹp và hiện đại", Gia = 18000000, TrangThai = "Trống" }
+                    new SanhTiec { MaSanh = Guid.NewGuid(), TenSanh = "Sài Gòn - Đà Lạt", SucChua = 00, MoTa = "Sảnh lớn sang trọng", Gia = 20000000, TrangThai = "Trống", HinhAnh = "/image/SaiGon-DaLat.jpg" },
+                    new SanhTiec { MaSanh = Guid.NewGuid(), TenSanh = "Đà Nẵng - Huế", SucChua = 150, MoTa = "Sảnh nhỏ ấm cúng", Gia = 12000000, TrangThai = "Trống", HinhAnh = "/image/DaNang-Hue.jpg" },
+                    new SanhTiec { MaSanh = Guid.NewGuid(), TenSanh = "Sài Gòn - Hà Nội", SucChua = 200, MoTa = "Phong cách hoàng gia", Gia = 15000000, TrangThai = "Trống", HinhAnh = "/image/SaiGon-HaNoi.jpg" },
+                    new SanhTiec { MaSanh = Guid.NewGuid(), TenSanh = "Nha Trang - Đà Lạt", SucChua = 100, MoTa = "Phù hợp tiệc thân mật", Gia = 9000000, TrangThai = "Trống", HinhAnh = "/image/NhaTrang-DaLat.jpg" },
+                    new SanhTiec { MaSanh = Guid.NewGuid(), TenSanh = "Sài Gòn - Vũng Tàu", SucChua = 250, MoTa = "Đẹp và hiện đại", Gia = 18000000, TrangThai = "Trống", HinhAnh = "/image/SaiGon-VungTau.jpg" }
                 );
             }
 
