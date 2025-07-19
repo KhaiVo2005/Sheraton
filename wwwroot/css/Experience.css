@@ -1,0 +1,225 @@
+﻿* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-size: 14px;
+    background: rgba(234, 232, 225, 1);
+}
+
+.v40_2 {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    background: rgba(234, 232, 225, 1);
+    position: relative;
+}
+
+/* Hero Image Section */
+.hero-image {
+    width: 100vw;
+    height: 614px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 50px;
+    margin-left: calc(-50vw + 50%);
+    margin-right: calc(-50vw + 50%);
+}
+
+    .hero-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+/* Text Section */
+.text-section {
+    text-align: center;
+    padding: 40px 20px;
+    margin-bottom: 80px;
+}
+
+.main-title {
+    font-family: 'Kyiv*Type Serif', serif;
+    font-weight: 300;
+    font-size: 64px;
+    color: rgba(0, 0, 0, 1);
+    margin-bottom: 20px;
+}
+
+.subtitle {
+    font-family: 'Josefin Slab', serif;
+    font-weight: 600;
+    font-size: 24px;
+    color: rgba(0, 0, 0, 1);
+    margin-bottom: 30px;
+    letter-spacing: 2px;
+}
+
+.description {
+    font-family: 'Kyiv*Type Serif', serif;
+    font-weight: 300;
+    font-size: 24px;
+    color: rgba(0, 0, 0, 1);
+    margin-bottom: 15px;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.description-secondary {
+    font-family: 'Kyiv*Type Serif', serif;
+    font-weight: 300;
+    font-size: 24px;
+    color: rgba(0, 0, 0, 1);
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Service Groups */
+.service-group {
+    position: relative;
+    width: 100%;
+    height: 500px;
+    margin-bottom: 60px;
+    display: flex;
+    align-items: center;
+}
+
+    .service-group.reverse {
+        flex-direction: row-reverse;
+    }
+
+.service-image {
+    width: 50%;
+    height: 500px;
+    position: relative;
+    z-index: 1;
+}
+
+    .service-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+.service-background {
+    width: 50%;
+    height: 500px;
+    background: rgba(217, 217, 217, 1);
+    position: absolute;
+    top: 0;
+    left: 50%;
+    z-index: 2;
+}
+
+.service-group.reverse .service-background {
+    left: 0;
+}
+
+.service-content {
+    width: 45%;
+    height: 460px;
+    background: rgba(255, 255, 255, 1);
+    position: absolute;
+    top: 20px;
+    left: 52.5%;
+    padding: 50px 40px;
+    z-index: 3;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.service-group.reverse .service-content {
+    left: 2.5%;
+}
+
+.service-content h3 {
+    font-family: 'Kyiv*Type Serif', serif;
+    font-weight: 300;
+    font-size: 32px;
+    color: rgba(0, 0, 0, 1);
+    margin-bottom: 20px;
+}
+
+.service-content p {
+    font-family: 'Kyiv*Type Serif', serif;
+    font-weight: 300;
+    font-size: 20px;
+    color: rgba(0, 0, 0, 1);
+    line-height: 1.6;
+    margin-bottom: 25px;
+}
+
+.cta-link {
+    font-family: 'Josefin Slab', serif;
+    font-weight: 400;
+    font-size: 20px;
+    color: rgba(0, 0, 0, 1);
+    text-decoration: underline;
+    display: inline-block;
+    margin-top: 20px;
+}
+
+.contact-info {
+    font-family: 'Kyiv*Type Serif', serif;
+    font-weight: 300;
+    font-size: 20px;
+    color: rgba(0, 0, 0, 1);
+    line-height: 1.6;
+    margin-top: 20px;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+    .service-group {
+        flex-direction: column;
+        height: auto;
+    }
+
+    .service-image {
+        width: 100%;
+        height: 400px;
+    }
+
+    .service-background {
+        display: none;
+    }
+
+    .service-content {
+        position: relative;
+        width: 100%;
+        height: auto;
+        left: 0;
+        top: 0;
+        margin-top: 20px;
+    }
+}
+
+@media (max-width: 768px) {
+    .main-title {
+        font-size: 40px;
+    }
+
+    .subtitle {
+        font-size: 18px;
+    }
+
+    .description,
+    .description-secondary {
+        font-size: 18px;
+    }
+
+    .service-content h3 {
+        font-size: 24px;
+    }
+
+    .service-content p {
+        font-size: 16px;
+    }
+}

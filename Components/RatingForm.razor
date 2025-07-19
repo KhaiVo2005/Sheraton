@@ -41,8 +41,7 @@
                 message = "✅ Gửi đánh giá thành công!";
                 rating = new Rating();
                 if (!string.IsNullOrEmpty(MaHD) && Guid.TryParse(MaHD, out var parsedGuid))
-                    rating.MaHD = parsedGuid;
-                await Task.Delay(1000); // Tuỳ chọn: delay 1s để người dùng thấy thông báo
+                    rating.MaHD = parsedGuid; // Tuỳ chọn: delay 1s để người dùng thấy thông báo
 
                 // Điều hướng về trang quản lý sự kiện
                 await JS.InvokeVoidAsync("eval", "window.location.href = '/Banquet/SuKiens/getSuKien'");

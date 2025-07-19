@@ -117,12 +117,6 @@
                     <div class="col-md-5">
                         <input class="form-control" type="number" placeholder="Số lượng" min="1" />
                     </div>
-                    <div class="col-md-3">
-                        <select class="form-control select-trangthai" >
-                            <option value="Chưa phục vụ">Chưa phục vụ</option>
-                            <option value="Đã phục vụ">Đã phục vụ</option>
-                        </select>
-                    </div>
 
                     <div class="col-md-2 d-flex">
                         <button type="button" class="btn btn-success" onclick="themMonAn(this)">+</button>
@@ -288,60 +282,50 @@
             return dsMonAn.map(mon => `<option value="${mon.MaMon}">${mon.TenMon}</option>`).join("");
         }
 
-        function themMonAn(btn = null) {
+                function themMonAn(btn = null) {
             if (btn) {
                 const row = btn.closest(".monAn-item");
                 const select = row.querySelector("select");
                 const soLuong = row.querySelector("input[type='number']");
-                const trangThaiInput = row.querySelector(".select-trangthai");
 
                 if (!select.value || !soLuong.value || soLuong.value <= 0) {
                     alert("Vui lòng chọn món và nhập số lượng hợp lệ.");
                     return;
                 }
 
-                // ✅ Thêm vào mảng lưu tạm
                 monAnList.push({
                     maMon: select.value,
                     soLuong: parseInt(soLuong.value),
-                    trangThai: trangThaiInput.value || "Chưa phục vụ"
+                    trangThai: "Chưa phục vụ"
                 });
 
-                // Lock input
                 select.setAttribute("disabled", "disabled");
                 soLuong.setAttribute("readonly", "readonly");
-                trangThaiInput.setAttribute("readonly", "readonly");
 
-                // Đổi nút thành Xoá
                 btn.innerText = "−";
                 btn.classList.remove("btn-success");
                 btn.classList.add("btn-danger");
                 btn.setAttribute("onclick", "xoaMonAn(this)");
 
-                // Nút sửa
                 const editBtn = document.createElement("button");
                 editBtn.type = "button";
                 editBtn.className = "btn btn-warning ml-2";
                 editBtn.innerText = "Sửa";
                 editBtn.onclick = function () {
                     const isReadonly = soLuong.hasAttribute("readonly");
-
                     if (isReadonly) {
                         select.removeAttribute("disabled");
                         soLuong.removeAttribute("readonly");
-                        trangThaiInput.removeAttribute("readonly");
                         editBtn.innerText = "Lưu";
                     } else {
-                        const updatedMaMon = select.value; // ✅ Lấy lại maMon tại đây
+                        const updatedMaMon = select.value;
                         const index = monAnList.findIndex(m => m.maMon === updatedMaMon);
                         if (index !== -1) {
                             monAnList[index].soLuong = parseInt(soLuong.value);
-                            monAnList[index].trangThai = trangThaiInput.value || "Chưa phục vụ";
                         }
 
                         select.setAttribute("disabled", true);
                         soLuong.setAttribute("readonly", true);
-                        trangThaiInput.setAttribute("readonly", true);
                         editBtn.innerText = "Sửa";
                     }
                 };
@@ -366,12 +350,6 @@
                 <div class="col-md-5">
                     <input class="form-control" type="number" placeholder="Số lượng" min="1" />
                 </div>
-                <div class="col-md-3">
-                    <select class="form-control select-trangthai">
-                        <option value="Chưa phục vụ">Chưa phục vụ</option>
-                        <option value="Đã phục vụ">Đã phục vụ</option>
-                    </select>
-                </div>
 
                 <div class="col-md-2 d-flex">
                     <button type="button" class="btn btn-success" onclick="themMonAn(this)">+</button>
@@ -382,33 +360,20 @@
 
             console.log("Danh sách món ăn hiện tại:", monAnList);
         }
-
-        function xoaMonAn(btn) {
+                function xoaMonAn(btn) {
             const row = btn.closest(".monAn-item");
             const select = row.querySelector("select");
             const maMon = select.value;
-            monAnList = monAnList.filter(m => m.maMon !== maMon); // ❌ Remove khỏi mảng
+
+            // Cập nhật mảng dữ liệu
+            monAnList = monAnList.filter(item => item.maMon !== maMon);
+
+            // Xoá dòng khỏi giao diện
             row.remove();
+
+            console.log("Sau khi xoá, danh sách món ăn:", monAnList);
         }
 
-        // ✅ Trước khi submit, tạo hidden input từ mảng
-        function insertMonAnHiddenInputs() {
-            const form = document.querySelector("form");
-
-            // Xoá hidden cũ
-            document.querySelectorAll(".monan-hidden").forEach(e => e.remove());
-
-            monAnList.forEach((item, index) => {
-                const container = document.createElement("div");
-                container.classList.add("monan-hidden");
-                container.innerHTML = `
-                    <input type="hidden" name="MonAns[${index}].MaMon" value="${item.maMon}" />
-                    <input type="hidden" name="MonAns[${index}].SoLuong" value="${item.soLuong}" />
-                    <input type="hidden" name="MonAns[${index}].TrangThai" value="${item.trangThai}" />
-                `;
-                form.appendChild(container);
-            });
-        }
 
         function SaveChiTiet() {
             document.querySelectorAll(".generated-monAn").forEach(e => e.remove());

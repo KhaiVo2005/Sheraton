@@ -20,5 +20,9 @@ namespace Sheraton.Controllers
         {
             return View(await _context.SanhTiecs.ToListAsync());
         }
+        public async Task<IActionResult> Experience()
+        {
+            return View();
+        }
     }
 }

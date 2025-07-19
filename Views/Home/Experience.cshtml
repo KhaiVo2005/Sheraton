@@ -1,0 +1,60 @@
+﻿@model IEnumerable<Sheraton.Models.SanhTiec>
+@{
+    Layout = "~/Views/Shared/_LayoutKhachHang.cshtml"; // hoặc _LayoutKhachHang.cshtml nếu dùng layout riêng
+    ViewData["Title"] = "Thông tin Sảnh Tiệc";
+}
+@section Styles {
+    <link href="~/css/Experience.css" rel="stylesheet" />
+}
+<div class="v40_2">
+    <!-- Hero Image Section -->
+    <div class="hero-image">
+        <img src="~/image/v40_62.png" alt="Hero Image">
+    </div>
+
+    <!-- Text Section -->
+    <div class="text-section">
+        <h1 class="main-title">Meetings & Events by Sheraton</h1>
+        <h2 class="subtitle">THE BEST WORK IS DONE TOGETHER</h2>
+        <p class="description">No matter the size or purpose of your meeting or event, we'll take care of all the details.</p>
+        <p class="description-secondary">We are your connection point to colleagues, coworkers, friends, and family around the globe.</p>
+    </div>
+
+    <!-- Service Section 1: Meet Anywhere -->
+    <div class="service-group">
+        <div class="service-image">
+            <img src="~/image/v40_67.png" alt="Meet Anywhere">
+        </div>
+        <div class="service-background"></div>
+        <div class="service-content">
+            <h3>Meet Anywhere, Worldwide</h3>
+            <p>We host city-center meetings, tropical resort retreats, destination events and everything in between. Browse our variety of venues and locations for your next meeting or event.</p>
+            <a href="#" class="cta-link">BOOK NOW ></a>
+        </div>
+    </div>
+
+    <!-- Service Section 2: Food & Beverage -->
+    <div class="service-group reverse">
+        <div class="service-image">
+            <img src="~/image/v41_10.png" alt="Food & Beverage">
+        </div>
+        <div class="service-background"></div>
+        <div class="service-content">
+            <h3>Food & Beverage</h3>
+            <p>Thoughtfully crafted menus that deliver fresh and varied options for your guests.</p>
+        </div>
+    </div>
+
+    <!-- Service Section 3: Weddings/Social Events -->
+    <div class="service-group">
+        <div class="service-image">
+            <img src="~/image/v41_9.png" alt="Weddings/Social Events">
+        </div>
+        <div class="service-background"></div>
+        <div class="service-content">
+            <h3>Weddings/Social Events</h3>
+            <p>We can make magic happen at any one of our 440 Sheraton Hotels around the world. Our team of experts will partner with you to make your special event or meeting a success.</p>
+            <p class="contact-info">To learn more, call 800.831.4004 or email group.sales@marriott.com.</p>
+        </div>
+    </div>
+</div>
