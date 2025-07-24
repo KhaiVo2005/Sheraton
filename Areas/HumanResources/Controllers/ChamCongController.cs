@@ -6,9 +6,11 @@ using Sheraton.Models;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text.Json;
+using WebTravel.Attribute;
 
 namespace Sheraton.Areas.HumanResources.Controllers
 {
+    [CheckRole("HumanResources")]
     [Area("HumanResources")]
     public class ChamCongController : Controller
     {

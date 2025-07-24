@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using WebTravel.Attribute;
 
 namespace Sheraton.Areas.Sale.Controllers
 {
+    [CheckRole("Sale")]
     [Area("Sale")]
     public class HomeController : Controller
     {

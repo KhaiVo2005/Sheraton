@@ -6,6 +6,7 @@ namespace Sheraton.Models
     {
         //Primary key and properties
         [Key]
+        [Required(ErrorMessage = "Vui lòng chọn dịch vụ")]
         public Guid MaDV { get; set; } 
         [Required(ErrorMessage = "Tên dịch vụ không được để trống")]
         public string TenDV { get; set; } 

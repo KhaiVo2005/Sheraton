@@ -4,9 +4,11 @@ using Sheraton.Data;
 using Sheraton.Helpers;
 using Sheraton.Models;
 using Sheraton.Models.ViewModel;
+using WebTravel.Attribute;
 
 namespace Sheraton.Areas.Accounting.Controllers
 {
+    [CheckRole("Accounting")]
     [Area("Accounting")]
     public class HomeController : Controller
     {

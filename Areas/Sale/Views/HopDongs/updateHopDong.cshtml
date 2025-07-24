@@ -14,31 +14,132 @@
         <form asp-action="updateHopDong">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="MaHD" />
+
             <div class="form-group">
                 <label asp-for="NgayKy" class="control-label"></label>
                 <input asp-for="NgayKy" class="form-control" />
                 <span asp-validation-for="NgayKy" class="text-danger"></span>
             </div>
+
             <div class="form-group">
                 <label asp-for="TienCoc" class="control-label"></label>
                 <input asp-for="TienCoc" class="form-control" />
                 <span asp-validation-for="TienCoc" class="text-danger"></span>
             </div>
+
             <div class="form-group">
                 <label asp-for="TrangThai" class="control-label"></label>
-                <input asp-for="TrangThai" class="form-control" />
+                <select asp-for="TrangThai" class="form-control">
+                    <option value="Chờ duyệt">Chờ duyệt</option>
+                    <option value="Đã duyệt">Đã duyệt</option>
+                    <option value="Đã huỷ">Đã huỷ</option>
+                </select>
                 <span asp-validation-for="TrangThai" class="text-danger"></span>
             </div>
+
             <div class="form-group">
                 <label asp-for="MaKH" class="control-label"></label>
                 <select asp-for="MaKH" class="form-control" asp-items="ViewBag.MaKH"></select>
                 <span asp-validation-for="MaKH" class="text-danger"></span>
             </div>
+
             <div class="form-group">
                 <label asp-for="MaNV" class="control-label"></label>
                 <select asp-for="MaNV" class="form-control" asp-items="ViewBag.MaNV"></select>
                 <span asp-validation-for="MaNV" class="text-danger"></span>
             </div>
+
+            <!-- ✅ THÊM MA DV Ở ĐÂY -->
+            <div class="form-group">
+                <label asp-for="MaDV" class="control-label"></label>
+                <select asp-for="MaDV" class="form-control" asp-items="ViewBag.MaDV">
+                    <option value="">-- Chọn dịch vụ --</option>
+                </select>
+                <span asp-validation-for="MaDV" class="text-danger"></span>
+            </div>
+            <h4>Chi tiết đặt tiệc</h4>
+            @if (Model.ChiTietDatTiecs != null && Model.ChiTietDatTiecs.Any())
+            {
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Món ăn</th>
+                            <th>Số lượng</th>
+                            <th>Trạng thái</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            var chiTietList = Model.ChiTietDatTiecs.ToList();
+                        }
+                        @for (int i = 0; i < chiTietList.Count; i++)
+                        {
+                            <tr>
+                                <td>
+                                    <input type="hidden" name="ChiTietDatTiecs[@i].MaMon" value="@chiTietList[i].MaMon" />
+                                    @chiTietList[i].MonAn?.TenMon
+                                </td>
+                                <td>
+                                    <input type="number" name="ChiTietDatTiecs[@i].SoLuong" class="form-control" value="@chiTietList[i].SoLuong" />
+                                </td>
+                                <td>
+                                    <select name="ChiTietDatTiecs[@i].TrangThai" class="form-control">
+                                        <option value="Đang chuẩn bị" selected="@(chiTietList[i].TrangThai == "Đang chuẩn bị")">Đang chuẩn bị</option>
+                                        <option value="Đã phục vụ" selected="@(chiTietList[i].TrangThai == "Đã phục vụ")">Đã phục vụ</option>
+                                        <option value="Đã huỷ" selected="@(chiTietList[i].TrangThai == "Đã huỷ")">Đã huỷ</option>
+                                    </select>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+
+            <h4>Lịch đặt sảnh</h4>
+            @if (Model.LichDatSanhs != null && Model.LichDatSanhs.Any())
+            {
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Sảnh</th>
+                            <th>Bắt đầu</th>
+                            <th>Kết thúc</th>
+                            <th>Trạng thái</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            var lichdatSanh = Model.LichDatSanhs.ToList();
+                        }
+                        @for (int i = 0; i < lichdatSanh.Count; i++)
+                        {
+                            <tr>
+                                <td>
+                                    <input type="hidden" name="LichDatSanhs[@i].MaSanh" value="@lichdatSanh[i].MaSanh" />
+                                    @lichdatSanh[i].Sanh?.TenSanh
+                                </td>
+                                <td>
+                                    <input type="datetime-local" name="LichDatSanhs[@i].BatDau" class="form-control"
+                                           value="@lichdatSanh[i].BatDau.ToString("yyyy-MM-ddTHH:mm")" />
+                                </td>
+                                <td>
+                                    <input type="datetime-local" name="LichDatSanhs[@i].KetThuc" class="form-control"
+                                           value="@lichdatSanh[i].KetThuc.ToString("yyyy-MM-ddTHH:mm")" />
+                                </td>
+                                <td>
+                                    <select name="LichDatSanhs[@i].TrangThai" class="form-control">
+                                        <option value="Đặt trước" selected="@(lichdatSanh[i].TrangThai == "Đặt trước")">Đặt trước</option>
+                                        <option value="Đang sử dụng" selected="@(lichdatSanh[i].TrangThai == "Đang sử dụng")">Đang sử dụng</option>
+                                        <option value="Đã hoàn thành" selected="@(lichdatSanh[i].TrangThai == "Đã hoàn thành")">Đã hoàn thành</option>
+                                        <option value="Đã huỷ" selected="@(lichdatSanh[i].TrangThai == "Đã huỷ")">Đã huỷ</option>
+                                    </select>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+            <!-- ✅ NÚT SUBMIT SAU CÙNG -->
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
             </div>
@@ -51,5 +152,7 @@
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

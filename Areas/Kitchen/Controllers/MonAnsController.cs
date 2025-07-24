@@ -1,15 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Sheraton.Data;
 using Sheraton.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using WebTravel.Attribute;
 
 namespace Sheraton.Areas.Kitchen.Controllers
 {
+    [CheckRole("Kitchen")]
     [Area("Kitchen")]
     public class MonAnsController : Controller
     {

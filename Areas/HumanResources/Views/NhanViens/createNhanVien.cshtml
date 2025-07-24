@@ -19,6 +19,16 @@
                 <span asp-validation-for="TenNV" class="text-danger"></span>
             </div>
             <div class="form-group">
+                <label asp-for="TK" class="control-label"></label>
+                <input asp-for="TK" class="form-control" />
+                <span asp-validation-for="TK" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="MK" class="control-label"></label>
+                <input asp-for="MK" class="form-control" />
+                <span asp-validation-for="MK" class="text-danger"></span>
+            </div>
+            <div class="form-group">
                 <label asp-for="SDT" class="control-label"></label>
                 <input asp-for="SDT" class="form-control" />
                 <span asp-validation-for="SDT" class="text-danger"></span>
@@ -35,7 +45,8 @@
             </div>
             <div class="form-group">
                 <label asp-for="ChucVu" class="control-label"></label>
-                <input asp-for="ChucVu" class="form-control" />
+                <select asp-for="ChucVu" class="form-control" id="chucVuSelect">
+                </select>
                 <span asp-validation-for="ChucVu" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -50,5 +61,27 @@
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        const roleDict = {
+            "Accounting": "Kế toán",
+            "Banquet": "Tiệc",
+            "HumanResources": "Nhân sự",
+            "Kitchen": "Bếp",
+            "Sale": "Bán hàng"
+        };
+
+        const select = document.getElementById("chucVuSelect");
+
+        for (const [value, label] of Object.entries(roleDict)) {
+            const option = document.createElement("option");
+            option.value = value;         // Lưu vào CSDL
+            option.textContent = label;   // Hiển thị
+            select.appendChild(option);
+        }
+    </script>
+
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }
+

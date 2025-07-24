@@ -80,6 +80,38 @@
                 <span class="text-muted fst-italic">Chưa có đánh giá</span>
             }
         </dd>
+        <dt class="col-sm-2">
+            Món ăn đã đặt
+        </dt>
+        <dd class="col-sm-10">
+            @if (Model.ChiTietDatTiecs != null && Model.ChiTietDatTiecs.Any())
+            {
+                <table class="table table-bordered table-sm">
+                    <thead>
+                        <tr>
+                            <th>Món ăn</th>
+                            <th>Số lượng</th>
+                            <th>Trạng thái</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var ct in Model.ChiTietDatTiecs)
+                        {
+                            <tr>
+                                <td>@ct.MonAn?.TenMon</td>
+                                <td>@ct.SoLuong</td>
+                                <td>@(ct.TrangThai ?? "Chưa phục vụ")</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+            else
+            {
+                <span class="text-muted fst-italic">Chưa có món ăn</span>
+            }
+        </dd>
+
     </dl>
 </div>
 <div>

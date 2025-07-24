@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Sheraton.Data;
 using Sheraton.Models;
+using WebTravel.Attribute;
 
 [Route("api/[controller]")]
 [ApiController]
+[CheckRole("Banquet")]
 public class RatingsController : ControllerBase
 {
     private readonly SheratonDbContext _context;

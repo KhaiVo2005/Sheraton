@@ -11,6 +11,7 @@ var connectionString = builder.Configuration.GetConnectionString("SheratonContex
 builder.Services.AddRazorPages();
 builder.Services.AddHttpClient();
 builder.Services.AddScoped<PdfRenderHelper>();
+builder.Services.AddSession();
 
 builder.Services.AddDbContext<SheratonDbContext>(opts => {
     opts.UseSqlServer(
@@ -44,6 +45,8 @@ app.UseRouting();
 app.UseAuthorization();
 
 app.UseStaticFiles();
+
+app.UseSession();
 
 app.MapStaticAssets();
 app.MapRazorPages()

@@ -22,14 +22,18 @@
             <h5>Thông tin hợp đồng</h5>
             <div class="form-group">
                 <label asp-for="HopDong.NgayKy" class="control-label"></label>
-                <input asp-for="HopDong.NgayKy" class="form-control" />
+                <input asp-for="HopDong.NgayKy" class="form-control"
+                       type="datetime-local"
+                       value="@Model.HopDong.NgayKy.ToString("yyyy-MM-ddTHH:mm:ss")" />
+
                 <span asp-validation-for="HopDong.NgayKy" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="HopDong.TienCoc" class="control-label"></label>
-                <input asp-for="HopDong.TienCoc" class="form-control" />
+                <input asp-for="HopDong.TienCoc" class="form-control" type="number" min="0" step="1000" />
                 <span asp-validation-for="HopDong.TienCoc" class="text-danger"></span>
             </div>
+
             <div class="form-group">
                 <label asp-for="HopDong.SoLuong" class="control-label"></label>
                 <input asp-for="HopDong.SoLuong" class="form-control" />
@@ -181,20 +185,33 @@
     @await Html.PartialAsync("_ValidationScriptsPartial")
 
     <script>
-        const lichDaDat = @Html.Raw(JsonSerializer.Serialize(ViewBag.LichDaDat));
-
-        function chonSanh(card) {
-            document.querySelectorAll(".sanh-card").forEach(el => el.classList.remove("selected"));
-            card.classList.add("selected");
-            const maSanh = card.getAttribute("data-masan");
-            document.getElementById("MaSanh").value = maSanh;
+        // Hàm format datetime-local
+        function formatDateTimeLocal(date) {
+            const offset = date.getTimezoneOffset();
+            const localDate = new Date(date.getTime() - offset * 60 * 1000);
+            return localDate.toISOString().slice(0, 16);
         }
+
+        const lichDaDat = @Html.Raw(JsonSerializer.Serialize(ViewBag.LichDaDat));
+        const dsMonAn = @Html.Raw(JsonSerializer.Serialize(ViewBag.DanhSachMonAn));
+        let monAnList = [];
 
         document.addEventListener("DOMContentLoaded", function () {
             const soLuongInput = document.querySelector('input[name="HopDong.SoLuong"]');
             const batDauInput = document.querySelector('input[name="LichDatSanh.BatDau"]');
             const ketThucInput = document.querySelector('input[name="LichDatSanh.KetThuc"]');
             const allSanhCards = document.querySelectorAll(".sanh-card");
+
+            // ✅ Gán mặc định ngày giờ nếu rỗng
+            if (!batDauInput.value) {
+                const now = new Date();
+                batDauInput.value = formatDateTimeLocal(now);
+            }
+            if (!ketThucInput.value) {
+                const after2Hours = new Date();
+                after2Hours.setHours(after2Hours.getHours() + 2);
+                ketThucInput.value = formatDateTimeLocal(after2Hours);
+            }
 
             function locTheoSoLuong() {
                 const soLuong = parseInt(soLuongInput.value) || 0;
@@ -252,7 +269,7 @@
                         card.style.opacity = "1";
                         trangThaiEl.innerText = "Trống";
                         card.setAttribute("onclick", "chonSanh(this)");
-                    } 
+                    }
                 });
             }
 
@@ -266,23 +283,20 @@
             ketThucInput.addEventListener("change", locTheoThoiGian);
         });
 
-        
-
-        //----------------------------------------------------------------------------------------
-        function dsMonAnOptions() {
-            const ds = @Html.Raw(JsonSerializer.Serialize(ViewBag.DanhSachMonAn));
-            return ds.map(mon => `<option value="${mon.MaMon}">${mon.TenMon}</option>`).join("");
+        // ✅ Hàm chọn sảnh
+        function chonSanh(card) {
+            document.querySelectorAll(".sanh-card").forEach(el => el.classList.remove("selected"));
+            card.classList.add("selected");
+            const maSanh = card.getAttribute("data-masan");
+            document.getElementById("MaSanh").value = maSanh;
         }
 
-        const dsMonAn = @Html.Raw(JsonSerializer.Serialize(ViewBag.DanhSachMonAn));
-        let monAnList = [];
-        let monAnIndex = 0;
-
+        // ✅ Danh sách món ăn
         function dsMonAnOptions() {
             return dsMonAn.map(mon => `<option value="${mon.MaMon}">${mon.TenMon}</option>`).join("");
         }
 
-                function themMonAn(btn = null) {
+        function themMonAn(btn = null) {
             if (btn) {
                 const row = btn.closest(".monAn-item");
                 const select = row.querySelector("select");
@@ -332,7 +346,7 @@
                 btn.parentElement.appendChild(editBtn);
             }
 
-            // Thêm dòng mới
+            // Tạo dòng mới
             const danhSach = document.getElementById("danhSachMonAn");
             const div = document.createElement("div");
             div.className = "form-row monAn-item mb-2";
@@ -350,30 +364,21 @@
                 <div class="col-md-5">
                     <input class="form-control" type="number" placeholder="Số lượng" min="1" />
                 </div>
-
                 <div class="col-md-2 d-flex">
                     <button type="button" class="btn btn-success" onclick="themMonAn(this)">+</button>
                 </div>
             `;
             danhSach.appendChild(div);
-            monAnIndex++;
-
-            console.log("Danh sách món ăn hiện tại:", monAnList);
         }
-                function xoaMonAn(btn) {
+
+        function xoaMonAn(btn) {
             const row = btn.closest(".monAn-item");
             const select = row.querySelector("select");
             const maMon = select.value;
 
-            // Cập nhật mảng dữ liệu
             monAnList = monAnList.filter(item => item.maMon !== maMon);
-
-            // Xoá dòng khỏi giao diện
             row.remove();
-
-            console.log("Sau khi xoá, danh sách món ăn:", monAnList);
         }
-
 
         function SaveChiTiet() {
             document.querySelectorAll(".generated-monAn").forEach(e => e.remove());
@@ -397,7 +402,8 @@
                 });
             });
 
-            return true; // Cho phép submit tiếp tục
+            return true;
         }
     </script>
+}
 }

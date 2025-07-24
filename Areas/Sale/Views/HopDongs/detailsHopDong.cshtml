@@ -77,6 +77,34 @@
     {
         <p>Không có lịch đặt sảnh.</p>
     }
+    <h4>Chi tiết đặt tiệc</h4>
+    @if (Model.ChiTietDatTiecs != null && Model.ChiTietDatTiecs.Any())
+    {
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Tên món</th>
+                    <th>Số lượng</th>
+                    <th>Ghi chú</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var chiTiet in Model.ChiTietDatTiecs)
+                {
+                    <tr>
+                        <td>@chiTiet.MonAn?.TenMon</td>
+                        <td>@chiTiet.SoLuong</td>
+                        <td>@chiTiet.TrangThai</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p>Không có chi tiết đặt tiệc.</p>
+    }
+
 
 </div>
 <div>

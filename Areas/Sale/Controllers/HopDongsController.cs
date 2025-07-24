@@ -1,18 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text.Json;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Sheraton.Data;
 using Sheraton.Helpers;
 using Sheraton.Models;
 using Sheraton.Models.ViewModel;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text.Json;
+using System.Threading.Tasks;
+using WebTravel.Attribute;
 
 namespace Sheraton.Areas.Sale.Controllers
 {
+    [CheckRole("Sale")]
     [Area("Sale")]
     public class HopDongsController : Controller
     {
@@ -44,6 +46,7 @@ namespace Sheraton.Areas.Sale.Controllers
                 .Include(h => h.NhanVien)
                 .Include(h => h.DichVu)
                 .Include(h => h.LichDatSanhs).ThenInclude(h => h.Sanh)
+                .Include(h => h.ChiTietDatTiecs).ThenInclude(c => c.MonAn)
                 .FirstOrDefaultAsync(m => m.MaHD == id);
             if (hopDong == null)
             {
@@ -97,9 +100,8 @@ namespace Sheraton.Areas.Sale.Controllers
                 .Select(l => new
                 {
                     maSanh = l.MaSanh,
-                    batDau = l.BatDau.ToString("o"),
-                    ketThuc = l.KetThuc.ToString("o")
-
+                    batDau = l.BatDau.ToString("yyyy-MM-ddTHH:mm:ss"),
+                    ketThuc = l.KetThuc.ToString("yyyy-MM-ddTHH:mm:ss")
                 }).ToList();
 
 
@@ -109,7 +111,20 @@ namespace Sheraton.Areas.Sale.Controllers
             var danhsachmonan = _context.MonAns.ToList();
             ViewBag.DanhSachMonAn = danhsachmonan;
 
-            return View(new HopDongLichDat());
+            return View(new HopDongLichDat
+            {
+                HopDong = new HopDong
+                {
+                    NgayKy = DateTime.Now,
+                    SoLuong = 0,
+                    TienCoc = 0
+                },
+                LichDatSanh = new LichDatSanh
+                {
+                    BatDau = DateTime.Now,
+                    KetThuc = DateTime.Now.AddHours(2)
+                }
+            });
         }
 
 
@@ -201,96 +216,109 @@ namespace Sheraton.Areas.Sale.Controllers
             return View(model);
         }
 
+        private async Task<HopDong?> LoadFullHopDong(Guid id)
+        {
+            return await _context.HopDongs
+                .Include(h => h.ChiTietDatTiecs).ThenInclude(ct => ct.MonAn)
+                .Include(h => h.LichDatSanhs).ThenInclude(l => l.Sanh)
+                .FirstOrDefaultAsync(h => h.MaHD == id);
+        }
 
 
-        // GET: Sale/HopDongs/Edit/5
         public async Task<IActionResult> updateHopDong(Guid? id)
         {
             if (id == null)
-            {
                 return NotFound();
-            }
 
-            var hopDong = await _context.HopDongs.FindAsync(id);
+            var hopDong = await LoadFullHopDong(id.Value);
+
             if (hopDong == null)
-            {
                 return NotFound();
-            }
-            ViewData["MaKH"] = new SelectList(_context.KhachHangs, "MaKH", "TenKH", hopDong.MaKH);
-            ViewData["MaNV"] = new SelectList(_context.NhanViens, "MaNV", "ChucVu", hopDong.MaNV);
-            ViewData["MaDV"] = new SelectList(_context.NhanViens, "MaDV", "TenDV", hopDong.MaNV);
+
+            SetDropdowns(hopDong);
 
             ViewBag.DanhSachSanh = _context.SanhTiecs.ToList();
-
             ViewBag.LichDaDat = _context.LichDatSanhs
                 .Where(l => l.MaHD != id)
-                .Select(l => new {
+                .Select(l => new
+                {
                     maSanh = l.MaSanh,
                     batDau = l.BatDau.ToString("o"),
                     ketThuc = l.KetThuc.ToString("o")
                 }).ToList();
-            return View(hopDong);
+
+            return View(hopDong); // View: Views/HopDongs/updateHopDong.cshtml
         }
 
-        // POST: Sale/HopDongs/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> updateHopDong(Guid id, [Bind("MaHD,NgayKy,TienCoc,TrangThai,MaKH,MaNV,MaDV")] HopDong hopDong)
+        public async Task<IActionResult> updateHopDong(HopDong hopDong)
         {
-            if (id != hopDong.MaHD)
+            if (!ModelState.IsValid)
+            {
+                SetDropdowns(hopDong);
+                return View(hopDong);
+            }
+
+            var existingHopDong = await LoadFullHopDong(hopDong.MaHD);
+            if (existingHopDong == null)
             {
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+            try
             {
-                try
+                // Cập nhật các trường của hợp đồng
+                existingHopDong.NgayKy = hopDong.NgayKy;
+                existingHopDong.TienCoc = hopDong.TienCoc;
+                existingHopDong.TrangThai = hopDong.TrangThai;
+                existingHopDong.MaKH = hopDong.MaKH;
+                existingHopDong.MaNV = hopDong.MaNV;
+                existingHopDong.MaDV = hopDong.MaDV;
+
+                // Cập nhật Chi tiết đặt tiệc
+                foreach (var ct in hopDong.ChiTietDatTiecs)
                 {
-                    _context.Update(hopDong);
-                    await _context.SaveChangesAsync();
+                    var existingCT = existingHopDong.ChiTietDatTiecs.FirstOrDefault(x => x.MaMon == ct.MaMon);
+                    if (existingCT != null)
+                    {
+                        existingCT.SoLuong = ct.SoLuong;
+                        existingCT.TrangThai = ct.TrangThai;
+                    }
                 }
-                catch (DbUpdateConcurrencyException)
+
+                // Cập nhật Lịch đặt sảnh
+                foreach (var lich in hopDong.LichDatSanhs)
                 {
-                    if (!HopDongExists(hopDong.MaHD))
+                    var existingLich = existingHopDong.LichDatSanhs.FirstOrDefault(x => x.MaSanh == lich.MaSanh);
+                    if (existingLich != null)
                     {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
+                        existingLich.BatDau = lich.BatDau;
+                        existingLich.KetThuc = lich.KetThuc;
+                        existingLich.TrangThai = lich.TrangThai;
                     }
                 }
+
+                await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(getHopDong));
             }
-            ViewData["MaKH"] = new SelectList(_context.KhachHangs, "MaKH", "Email", hopDong.MaKH);
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!HopDongExists(hopDong.MaHD))
+                    return NotFound();
+                else
+                    throw;
+            }
+        }
+
+
+        private void SetDropdowns(HopDong hopDong)
+        {
+            ViewData["MaKH"] = new SelectList(_context.KhachHangs, "MaKH", "TenKH", hopDong.MaKH);
             ViewData["MaNV"] = new SelectList(_context.NhanViens, "MaNV", "ChucVu", hopDong.MaNV);
             ViewData["MaDV"] = new SelectList(_context.DichVus, "MaDV", "TenDV", hopDong.MaDV);
-
-            return View(hopDong);
         }
 
-        // GET: Sale/HopDongs/Delete/5
-        public async Task<IActionResult> deleteHopDong(Guid? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var hopDong = await _context.HopDongs
-                .Include(h => h.KhachHang)
-                .Include(h => h.NhanVien)
-                .Include(h => h.DichVu)
-                .FirstOrDefaultAsync(m => m.MaHD == id);
-            if (hopDong == null)
-            {
-                return NotFound();
-            }
-
-            return View(hopDong);
-        }
 
         // POST: Sale/HopDongs/Delete/5
         [HttpPost, ActionName("deleteHopDong")]

@@ -3,9 +3,11 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using Sheraton.Data;
 using Sheraton.Models;
+using WebTravel.Attribute;
 
 namespace Sheraton.Areas.Banquet.Pages.DichVus
 {
+    [CheckRole("Banquet")]
     public class createDichVuModel : PageModel
     {
         public SheratonDbContext _context;

@@ -12,8 +12,8 @@ using Sheraton.Data;
 namespace Sheraton.Migrations
 {
     [DbContext(typeof(SheratonDbContext))]
-    [Migration("20250718063516_Initial")]
-    partial class Initial
+    [Migration("20250721075128_init")]
+    partial class init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
