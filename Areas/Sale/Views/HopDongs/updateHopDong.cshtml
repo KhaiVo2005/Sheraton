@@ -7,10 +7,10 @@
 
 <h1>Edit</h1>
 
-<h4>HopDong</h4>
+<h4>Hợp đồng</h4>
 <hr />
 <div class="row">
-    <div class="col-md-4">
+    <div class="col-md-10">
         <form asp-action="updateHopDong">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="MaHD" />
@@ -49,7 +49,6 @@
                 <span asp-validation-for="MaNV" class="text-danger"></span>
             </div>
 
-            <!-- ✅ THÊM MA DV Ở ĐÂY -->
             <div class="form-group">
                 <label asp-for="MaDV" class="control-label"></label>
                 <select asp-for="MaDV" class="form-control" asp-items="ViewBag.MaDV">
@@ -57,101 +56,132 @@
                 </select>
                 <span asp-validation-for="MaDV" class="text-danger"></span>
             </div>
+
             <h4>Chi tiết đặt tiệc</h4>
-            @if (Model.ChiTietDatTiecs != null && Model.ChiTietDatTiecs.Any())
-            {
-                <table class="table table-bordered">
-                    <thead>
+            <table class="table table-bordered" id="chiTietMonTable">
+                <thead>
+                    <tr>
+                        <th>Món ăn</th>
+                        <th>Số lượng</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        var chiTietList = Model.ChiTietDatTiecs?.ToList() ?? new List<Sheraton.Models.ChiTietDatTiec>();
+                    }
+                    @for (int i = 0; i < chiTietList.Count; i++)
+                    {
                         <tr>
-                            <th>Món ăn</th>
-                            <th>Số lượng</th>
-                            <th>Trạng thái</th>
+                            <td>
+                                <input type="hidden" name="ChiTietDatTiecs[@i].MaMon" value="@chiTietList[i].MaMon" />
+                                @chiTietList[i].MonAn?.TenMon
+                            </td>
+                            <td>
+                                <input type="number" name="ChiTietDatTiecs[@i].SoLuong" class="form-control" value="@chiTietList[i].SoLuong" />
+                            </td>
+                           
+                            <td>
+                                <button type="button" class="btn btn-danger btn-sm" onclick="removeRow(this)">Xoá</button>
+                            </td>
                         </tr>
-                    </thead>
-                    <tbody>
-                        @{
-                            var chiTietList = Model.ChiTietDatTiecs.ToList();
-                        }
-                        @for (int i = 0; i < chiTietList.Count; i++)
-                        {
-                            <tr>
-                                <td>
-                                    <input type="hidden" name="ChiTietDatTiecs[@i].MaMon" value="@chiTietList[i].MaMon" />
-                                    @chiTietList[i].MonAn?.TenMon
-                                </td>
-                                <td>
-                                    <input type="number" name="ChiTietDatTiecs[@i].SoLuong" class="form-control" value="@chiTietList[i].SoLuong" />
-                                </td>
-                                <td>
-                                    <select name="ChiTietDatTiecs[@i].TrangThai" class="form-control">
-                                        <option value="Đang chuẩn bị" selected="@(chiTietList[i].TrangThai == "Đang chuẩn bị")">Đang chuẩn bị</option>
-                                        <option value="Đã phục vụ" selected="@(chiTietList[i].TrangThai == "Đã phục vụ")">Đã phục vụ</option>
-                                        <option value="Đã huỷ" selected="@(chiTietList[i].TrangThai == "Đã huỷ")">Đã huỷ</option>
-                                    </select>
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            }
+                    }
+                </tbody>
+            </table>
+
+            <div class="form-inline mb-3">
+                <label>Thêm món mới:</label>
+                <select id="monMoiSelect" class="form-control mx-2"></select>
+                <input type="number" id="soLuongMoi" class="form-control mx-2" placeholder="Số lượng" min="1" value="1" />
+                <button type="button" class="btn btn-success" onclick="themMon()">Thêm</button>
+            </div>
 
             <h4>Lịch đặt sảnh</h4>
-            @if (Model.LichDatSanhs != null && Model.LichDatSanhs.Any())
-            {
-                <table class="table table-bordered">
-                    <thead>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Sảnh</th>
+                        <th>Bắt đầu</th>
+                        <th>Kết thúc</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        var lichdatSanh = Model.LichDatSanhs?.ToList() ?? new List<Sheraton.Models.LichDatSanh>();
+                    }
+                    @for (int i = 0; i < lichdatSanh.Count; i++)
+                    {
                         <tr>
-                            <th>Sảnh</th>
-                            <th>Bắt đầu</th>
-                            <th>Kết thúc</th>
-                            <th>Trạng thái</th>
+                            <td>
+                                <input type="hidden" name="LichDatSanhs[@i].MaSanh" value="@lichdatSanh[i].MaSanh" />
+                                @lichdatSanh[i].Sanh?.TenSanh
+                            </td>
+                            <td>
+                                <input type="datetime-local" name="LichDatSanhs[@i].BatDau" class="form-control"
+                                       value="@lichdatSanh[i].BatDau.ToString("yyyy-MM-ddTHH:mm")" />
+                            </td>
+                            <td>
+                                <input type="datetime-local" name="LichDatSanhs[@i].KetThuc" class="form-control"
+                                       value="@lichdatSanh[i].KetThuc.ToString("yyyy-MM-ddTHH:mm")" />
+                            </td>
                         </tr>
-                    </thead>
-                    <tbody>
-                        @{
-                            var lichdatSanh = Model.LichDatSanhs.ToList();
-                        }
-                        @for (int i = 0; i < lichdatSanh.Count; i++)
-                        {
-                            <tr>
-                                <td>
-                                    <input type="hidden" name="LichDatSanhs[@i].MaSanh" value="@lichdatSanh[i].MaSanh" />
-                                    @lichdatSanh[i].Sanh?.TenSanh
-                                </td>
-                                <td>
-                                    <input type="datetime-local" name="LichDatSanhs[@i].BatDau" class="form-control"
-                                           value="@lichdatSanh[i].BatDau.ToString("yyyy-MM-ddTHH:mm")" />
-                                </td>
-                                <td>
-                                    <input type="datetime-local" name="LichDatSanhs[@i].KetThuc" class="form-control"
-                                           value="@lichdatSanh[i].KetThuc.ToString("yyyy-MM-ddTHH:mm")" />
-                                </td>
-                                <td>
-                                    <select name="LichDatSanhs[@i].TrangThai" class="form-control">
-                                        <option value="Đặt trước" selected="@(lichdatSanh[i].TrangThai == "Đặt trước")">Đặt trước</option>
-                                        <option value="Đang sử dụng" selected="@(lichdatSanh[i].TrangThai == "Đang sử dụng")">Đang sử dụng</option>
-                                        <option value="Đã hoàn thành" selected="@(lichdatSanh[i].TrangThai == "Đã hoàn thành")">Đã hoàn thành</option>
-                                        <option value="Đã huỷ" selected="@(lichdatSanh[i].TrangThai == "Đã huỷ")">Đã huỷ</option>
-                                    </select>
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            }
-            <!-- ✅ NÚT SUBMIT SAU CÙNG -->
+                    }
+                </tbody>
+            </table>
+
             <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+                <input type="submit" value="Lưu" class="btn btn-primary" />
+                <a asp-action="getHopDong" class="btn btn-secondary ml-2">Quay lại</a>
             </div>
         </form>
     </div>
 </div>
 
-<div>
-    <a asp-action="getHopDong">Back to List</a>
-</div>
-
 @section Scripts {
+    <script>
+        const danhSachMonAn = @Html.Raw(Json.Serialize(ViewBag.DanhSachMonAn));
+        const tableBody = document.querySelector("#chiTietMonTable tbody");
+
+        function renderMonDropdown() {
+            const select = document.getElementById("monMoiSelect");
+            danhSachMonAn.forEach(mon => {
+                const option = document.createElement("option");
+                option.value = mon.maMon;
+                option.textContent = mon.tenMon;
+                select.appendChild(option);
+            });
+        }
+
+        function themMon() {
+            const maMon = document.getElementById("monMoiSelect").value;
+            const tenMon = document.getElementById("monMoiSelect").selectedOptions[0].textContent;
+            const soLuong = document.getElementById("soLuongMoi").value;
+
+            const rowCount = tableBody.rows.length;
+            const row = tableBody.insertRow();
+
+            row.innerHTML = `
+                <td>
+                    <input type="hidden" name="ChiTietDatTiecs[${rowCount}].MaMon" value="${maMon}" />
+                    ${tenMon}
+                </td>
+                <td>
+                    <input type="number" name="ChiTietDatTiecs[${rowCount}].SoLuong" class="form-control" value="${soLuong}" />
+                </td>
+                <td>
+                    <button type="button" class="btn btn-danger btn-sm" onclick="removeRow(this)">Xoá</button>
+                </td>
+            `;
+        }
+
+        function removeRow(btn) {
+            const row = btn.closest("tr");
+            row.remove();
+        }
+
+        document.addEventListener("DOMContentLoaded", renderMonDropdown);
+    </script>
+
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }

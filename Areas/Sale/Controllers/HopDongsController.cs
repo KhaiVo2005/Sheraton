@@ -227,28 +227,23 @@ namespace Sheraton.Areas.Sale.Controllers
 
         public async Task<IActionResult> updateHopDong(Guid? id)
         {
-            if (id == null)
-                return NotFound();
+            if (id == null) return NotFound();
 
             var hopDong = await LoadFullHopDong(id.Value);
-
-            if (hopDong == null)
-                return NotFound();
+            if (hopDong == null) return NotFound();
 
             SetDropdowns(hopDong);
 
-            ViewBag.DanhSachSanh = _context.SanhTiecs.ToList();
-            ViewBag.LichDaDat = _context.LichDatSanhs
-                .Where(l => l.MaHD != id)
-                .Select(l => new
-                {
-                    maSanh = l.MaSanh,
-                    batDau = l.BatDau.ToString("o"),
-                    ketThuc = l.KetThuc.ToString("o")
-                }).ToList();
+            // ✅ Danh sách món ăn dạng đơn giản: chỉ lấy MaMon + TenMon
+            ViewBag.DanhSachMonAn = _context.MonAns
+                .Select(m => new { m.MaMon, m.TenMon })
+                .ToList();
 
-            return View(hopDong); // View: Views/HopDongs/updateHopDong.cshtml
+            ViewBag.DanhSachSanh = _context.SanhTiecs.ToList();
+
+            return View(hopDong);
         }
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -257,6 +252,7 @@ namespace Sheraton.Areas.Sale.Controllers
             if (!ModelState.IsValid)
             {
                 SetDropdowns(hopDong);
+                ViewBag.DanhSachMonAn = _context.MonAns.ToList(); // ✅ Bổ sung lại nếu có lỗi
                 return View(hopDong);
             }
 
@@ -268,15 +264,24 @@ namespace Sheraton.Areas.Sale.Controllers
 
             try
             {
-                // Cập nhật các trường của hợp đồng
+                // ✅ Cập nhật các trường (loại bỏ TrangThai)
                 existingHopDong.NgayKy = hopDong.NgayKy;
                 existingHopDong.TienCoc = hopDong.TienCoc;
-                existingHopDong.TrangThai = hopDong.TrangThai;
                 existingHopDong.MaKH = hopDong.MaKH;
                 existingHopDong.MaNV = hopDong.MaNV;
                 existingHopDong.MaDV = hopDong.MaDV;
 
-                // Cập nhật Chi tiết đặt tiệc
+                // ✅ Cập nhật ChiTietDatTiecs (thêm, xoá, sửa)
+                var updatedMonIds = hopDong.ChiTietDatTiecs.Select(ct => ct.MaMon).ToList();
+                var monToRemove = existingHopDong.ChiTietDatTiecs
+                                                    .Where(x => !updatedMonIds.Contains(x.MaMon))
+                                                    .ToList();
+
+                foreach (var mon in monToRemove)
+                {
+                    existingHopDong.ChiTietDatTiecs.Remove(mon);
+                }
+
                 foreach (var ct in hopDong.ChiTietDatTiecs)
                 {
                     var existingCT = existingHopDong.ChiTietDatTiecs.FirstOrDefault(x => x.MaMon == ct.MaMon);
@@ -285,9 +290,19 @@ namespace Sheraton.Areas.Sale.Controllers
                         existingCT.SoLuong = ct.SoLuong;
                         existingCT.TrangThai = ct.TrangThai;
                     }
+                    else
+                    {
+                        existingHopDong.ChiTietDatTiecs.Add(new ChiTietDatTiec
+                        {
+                            MaHD = existingHopDong.MaHD,
+                            MaMon = ct.MaMon,
+                            SoLuong = ct.SoLuong,
+                            TrangThai = ct.TrangThai
+                        });
+                    }
                 }
 
-                // Cập nhật Lịch đặt sảnh
+                // ✅ Cập nhật LichDatSanhs như cũ
                 foreach (var lich in hopDong.LichDatSanhs)
                 {
                     var existingLich = existingHopDong.LichDatSanhs.FirstOrDefault(x => x.MaSanh == lich.MaSanh);
