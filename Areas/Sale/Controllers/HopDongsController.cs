@@ -270,6 +270,7 @@ namespace Sheraton.Areas.Sale.Controllers
                 existingHopDong.MaKH = hopDong.MaKH;
                 existingHopDong.MaNV = hopDong.MaNV;
                 existingHopDong.MaDV = hopDong.MaDV;
+                existingHopDong.GhiChu = hopDong.GhiChu;
 
                 // ✅ Cập nhật ChiTietDatTiecs (thêm, xoá, sửa)
                 var updatedMonIds = hopDong.ChiTietDatTiecs.Select(ct => ct.MaMon).ToList();

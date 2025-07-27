@@ -47,6 +47,12 @@
         <dd class="col-sm-10">
             @Html.DisplayFor(model => model.DichVu.TenDV)
         </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.GhiChu)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.GhiChu)
+        </dd>
     </dl>
     <h4>Lịch đặt sảnh</h4>
     @if (Model.LichDatSanhs != null && Model.LichDatSanhs.Any())

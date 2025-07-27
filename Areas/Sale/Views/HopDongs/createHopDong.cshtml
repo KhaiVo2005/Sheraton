@@ -51,6 +51,11 @@
                 <label asp-for="HopDong.MaDV" class="control-label"></label>
                 <select asp-for="HopDong.MaDV" class="form-control" asp-items="ViewBag.MaDV"></select>
             </div>
+            <div class="form-group">
+                <label asp-for="HopDong.GhiChu" class="control-label"></label>
+                <input asp-for="HopDong.GhiChu" class="form-control" />
+                <span asp-validation-for="HopDong.GhiChu" class="text-danger"></span>
+            </div>
 
             <!-- Thông tin lịch đặt sảnh -->
             <h5>Thông tin lịch đặt sảnh</h5>
@@ -405,5 +410,4 @@
             return true;
         }
     </script>
-}
 }

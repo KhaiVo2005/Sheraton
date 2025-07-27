@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Sheraton.Data;
 
@@ -11,9 +12,11 @@ using Sheraton.Data;
 namespace Sheraton.Migrations
 {
     [DbContext(typeof(SheratonDbContext))]
-    partial class SheratonDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250725061011_ghichu")]
+    partial class ghichu
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

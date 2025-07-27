@@ -16,7 +16,7 @@ namespace Sheraton.Models
         public int SoLuong { get; set; }
         public string? TrangThai { get; set; } = "Chưa thanh toán";
         public string? PTTT { get; set; }
-        
+        public string? GhiChu { get; set; }
 
         // Foreign keys
         public Guid MaKH { get; set; }
