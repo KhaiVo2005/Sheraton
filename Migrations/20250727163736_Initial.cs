@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Sheraton.Migrations
 {
     /// <inheritdoc />
-    public partial class init : Migration
+    public partial class Initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -64,6 +64,7 @@ namespace Sheraton.Migrations
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     GioiTinh = table.Column<bool>(type: "bit", nullable: false),
                     ChucVu = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    TrangThai = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     TK = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     MK = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
@@ -139,6 +140,7 @@ namespace Sheraton.Migrations
                     SoLuong = table.Column<int>(type: "int", nullable: false),
                     TrangThai = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     PTTT = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    GhiChu = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     MaKH = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     MaNV = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     MaDV = table.Column<Guid>(type: "uniqueidentifier", nullable: false)

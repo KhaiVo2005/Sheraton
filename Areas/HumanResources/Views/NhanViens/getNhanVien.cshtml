@@ -5,56 +5,52 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Index</h1>
+<h1>Danh sách nhân viên</h1>
 
 <p>
-    <a asp-action="createNhanVien">Create New</a>
+    <a asp-action="createNhanVien" class="btn btn-primary">Thêm mới</a>
 </p>
-<table class="table">
-    <thead>
+
+<table class="table table-bordered">
+    <thead class="table-dark">
         <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.TenNV)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.SDT)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Email)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.GioiTinh)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ChucVu)
-            </th>
-            <th></th>
+            <th>@Html.DisplayNameFor(model => model.TenNV)</th>
+            <th>@Html.DisplayNameFor(model => model.SDT)</th>
+            <th>@Html.DisplayNameFor(model => model.Email)</th>
+            <th>@Html.DisplayNameFor(model => model.GioiTinh)</th>
+            <th>@Html.DisplayNameFor(model => model.ChucVu)</th>
+            <th>@Html.DisplayNameFor(model => model.TrangThai)</th>
+            <th>Thao tác</th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.TenNV)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.SDT)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Email)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.GioiTinh)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ChucVu)
-            </td>
-            <td>
-                <a asp-action="updateNhanVien" asp-route-id="@item.MaNV">Edit</a> |
-                <a asp-action="detailsNhanVien" asp-route-id="@item.MaNV">Details</a> |
-                <a asp-action="deleteNhanVien" asp-route-id="@item.MaNV">Lock Account</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@Html.DisplayFor(modelItem => item.TenNV)</td>
+                <td>@Html.DisplayFor(modelItem => item.SDT)</td>
+                <td>@Html.DisplayFor(modelItem => item.Email)</td>
+                <td>@(item.GioiTinh ? "Nam" : "Nữ")</td>
+                <td>@Html.DisplayFor(modelItem => item.ChucVu)</td>
+                <td>
+                    @if (item.TrangThai == "Đang hoạt động")
+                    {
+                        <span class="text-success fw-bold">Đang hoạt động</span>
+                    }
+                    else
+                    {
+                        <span class="text-danger fw-bold">Đã khóa</span>
+                    }
+                </td>
+                <td>
+                    <a asp-action="updateNhanVien" asp-route-id="@item.MaNV" class="btn btn-sm btn-warning">Sửa</a>
+                    <a asp-action="detailsNhanVien" asp-route-id="@item.MaNV" class="btn btn-sm btn-info">Chi tiết</a>
+                    <a asp-action="ToggleTrangThai" asp-route-id="@item.MaNV"
+                       class="btn btn-sm @(item.TrangThai == "Đang hoạt động" ? "btn-danger" : "btn-success")">
+                        @(item.TrangThai == "Đang hoạt động" ? "Khóa" : "Mở khóa")
+                    </a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>

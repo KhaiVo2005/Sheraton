@@ -6,8 +6,8 @@
 }
 
 <h1>Quản lý sự kiện</h1>
-<table class="table">
-    <thead>
+<table class="table table-bordered">
+    <thead class="table-dark">
         <tr>
             <th>Ngày kí </th>
             <th>Số lượng khách</th>
@@ -36,9 +36,9 @@
                 @Html.DisplayFor(modelItem => item.DichVu.TenDV)
             </td>
             <td>
-                <a asp-action="updateSuKien" asp-route-id="@item.MaHD">Edit</a> |
-                <a asp-action="detailsSuKien" asp-route-id="@item.MaHD">Details</a> |
-                <a href="/danhgia?MaHD=@item.MaHD.ToString()">Đánh giá</a>
+                <a asp-action="updateSuKien" asp-route-id="@item.MaHD" class="btn btn-sm btn-warning">Sửa</a>
+                <a asp-action="detailsSuKien" asp-route-id="@item.MaHD" class="btn btn-sm btn-info">Chi tiết</a>
+                <a href="/danhgia?MaHD=@item.MaHD.ToString()" class="btn btn-sm btn-success">Đánh giá</a>
             </td>
         </tr>
 }

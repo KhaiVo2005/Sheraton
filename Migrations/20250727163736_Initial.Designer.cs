@@ -12,8 +12,8 @@ using Sheraton.Data;
 namespace Sheraton.Migrations
 {
     [DbContext(typeof(SheratonDbContext))]
-    [Migration("20250721075128_init")]
-    partial class init
+    [Migration("20250727163736_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -126,6 +126,9 @@ namespace Sheraton.Migrations
                     b.Property<Guid>("MaHD")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("GhiChu")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid>("MaDV")
                         .HasColumnType("uniqueidentifier");
@@ -273,6 +276,10 @@ namespace Sheraton.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("TenNV")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TrangThai")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 

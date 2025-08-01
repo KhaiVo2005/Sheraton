@@ -276,6 +276,10 @@ namespace Sheraton.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("TrangThai")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("MaNV");
 
                     b.ToTable("NhanViens");

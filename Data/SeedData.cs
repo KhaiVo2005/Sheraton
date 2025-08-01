@@ -45,11 +45,14 @@ namespace Sheraton.Data
             if (!context.NhanViens.Any())
             {
                 context.NhanViens.AddRange(
-                    new NhanVien { MaNV = Guid.Parse("1C015EC9-17C7-41E0-A3B8-890B88A82C1A"), TenNV = "Nguyễn Văn A", SDT = "0901234567", Email = "a@sheraton.com", GioiTinh = true, ChucVu = "Sale", TK = "A", MK ="1" },
-                    new NhanVien { MaNV = Guid.Parse("5A54F1DF-EAC9-437A-AAAA-5265598096C8"), TenNV = "Trần Thị B", SDT = "0912345678", Email = "b@sheraton.com", GioiTinh = false, ChucVu = "Sale", TK = "B", MK = "1" },
-                    new NhanVien { MaNV = Guid.Parse("CAE75845-6F32-42DE-BFD8-5D9ABD576EF3"), TenNV = "Lê Văn C", SDT = "0923456789", Email = "c@sheraton.com", GioiTinh = true, ChucVu = "Sale", TK = "C", MK = "1" },
-                    new NhanVien { MaNV = Guid.Parse("9DF281FD-7D78-4E7C-A777-6BA527C68721"), TenNV = "Phạm Thị D", SDT = "0934567890", Email = "d@sheraton.com", GioiTinh = false, ChucVu = "Sale", TK = "D", MK = "1" },
-                    new NhanVien { MaNV = Guid.Parse("C605C053-B124-4311-8D4D-33C50A56648A"), TenNV = "Đặng Văn E", SDT = "0945678901", Email = "e@sheraton.com", GioiTinh = true, ChucVu = "Sale", TK = "E", MK = "1" }
+                    new NhanVien { MaNV = Guid.Parse("1C015EC9-17C7-41E0-A3B8-890B88A82C1A"), TenNV = "Nguyễn Văn A", SDT = "0901234567", Email = "a@sheraton.com", GioiTinh = true, ChucVu = "Sale", TK = "A", MK ="1", TrangThai = "Đang hoạt động" },
+                    new NhanVien { MaNV = Guid.Parse("5A54F1DF-EAC9-437A-AAAA-5265598096C8"), TenNV = "Trần Thị B", SDT = "0912345678", Email = "b@sheraton.com", GioiTinh = false, ChucVu = "Sale", TK = "B", MK = "1", TrangThai = "Đang hoạt động" },
+                    new NhanVien { MaNV = Guid.Parse("CAE75845-6F32-42DE-BFD8-5D9ABD576EF3"), TenNV = "Lê Văn C", SDT = "0923456789", Email = "c@sheraton.com", GioiTinh = true, ChucVu = "Sale", TK = "C", MK = "1", TrangThai = "Đang hoạt động" },
+                    new NhanVien { MaNV = Guid.Parse("9DF281FD-7D78-4E7C-A777-6BA527C68721"), TenNV = "Phạm Thị D", SDT = "0934567890", Email = "d@sheraton.com", GioiTinh = false, ChucVu = "Sale", TK = "D", MK = "1" , TrangThai = "Đang hoạt động" },
+                    new NhanVien { MaNV = Guid.Parse("C605C053-B124-4311-8D4D-33C50A56648A"), TenNV = "Đặng Văn E", SDT = "0945678901", Email = "e@sheraton.com", GioiTinh = true, ChucVu = "Sale", TK = "sale", MK = "1" , TrangThai = "Đang hoạt động" },
+                    new NhanVien { MaNV = Guid.NewGuid(), TenNV = "Đặng Văn G", SDT = "094578901", Email = "g@sheraton.com", GioiTinh = true, ChucVu = "HumanResources", TK = "hr", MK = "1", TrangThai = "Đang hoạt động" },
+                    new NhanVien { MaNV = Guid.NewGuid(), TenNV = "Nguyễn Thị H", SDT = "095678902", Email = "h@sheraton.com", GioiTinh = true, ChucVu = "Accounting", TK = "accounting", MK = "1", TrangThai = "Đang hoạt động" },
+                    new NhanVien { MaNV = Guid.NewGuid(), TenNV = "Lê Văn I", SDT = "096789123", Email = "i@sheraton.com", GioiTinh = true, ChucVu = "Banquet", TK = "banquet", MK = "1" , TrangThai = "Đang hoạt động" }
                 );
             }
 
@@ -63,6 +66,7 @@ namespace Sheraton.Data
                     new KhachHangg { MaKH = Guid.NewGuid(), TenKH = "Đỗ Long", SDT = "0949494949", GioiTinh = true, Email = "long@gmail.com" }
                 );
             }
+
 
             context.SaveChanges();
         }

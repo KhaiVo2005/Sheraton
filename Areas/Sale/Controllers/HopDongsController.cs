@@ -70,6 +70,7 @@ namespace Sheraton.Areas.Sale.Controllers
 
             // Danh sách nhân viên hiển thị cả tên và chức vụ
             var nhanViens = _context.NhanViens
+                .Where(nv => nv.ChucVu == "Sale")
                 .Select(nv => new
                 {
                     MaNV = nv.MaNV,

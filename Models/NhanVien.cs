@@ -18,6 +18,7 @@ namespace Sheraton.Models
         [Required(ErrorMessage = "Chức vụ không được để trống")]
         public string ChucVu { get; set; }
         [Required(ErrorMessage = "Tài khoản không được để trống")]
+        public string TrangThai { get; set; } = "Đang hoạt động";
         public string TK { get; set; }
         [Required(ErrorMessage = "Mật khẩu không được để trống")]
         public string MK { get; set; }

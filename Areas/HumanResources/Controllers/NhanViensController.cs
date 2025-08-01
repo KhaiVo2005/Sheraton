@@ -138,20 +138,25 @@ namespace Sheraton.Areas.HumanResources.Controllers
             return View(nhanVien);
         }
 
-        // POST: HumanResources/NhanViens/Delete/5
-        [HttpPost, ActionName("deleteNhanVien")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(Guid id)
+
+        [HttpGet]
+        public async Task<IActionResult> ToggleTrangThai(Guid id)
         {
             var nhanVien = await _context.NhanViens.FindAsync(id);
             if (nhanVien != null)
             {
-                _context.NhanViens.Remove(nhanVien);
+                if (nhanVien.TrangThai == "Đang hoạt động")
+                    nhanVien.TrangThai = "Đã khóa";
+                else
+                    nhanVien.TrangThai = "Đang hoạt động";
+
+                _context.Update(nhanVien);
+                await _context.SaveChangesAsync();
             }
 
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(getNhanVien));
         }
+
 
         private bool NhanVienExists(Guid id)
         {

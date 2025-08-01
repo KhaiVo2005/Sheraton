@@ -28,11 +28,17 @@ namespace Sheraton.Controllers
 
             if (user != null)
             {
+                if (user.TrangThai != "Đang hoạt động")
+                {
+                    ViewBag.Error = "Tài khoản đã bị khóa.";
+                    return View();
+                }
                 // Lưu session
                 HttpContext.Session.SetString("Id", user.MaNV.ToString());
                 HttpContext.Session.SetString("Username", user.TK);
                 HttpContext.Session.SetString("FullName", user.TenNV);
                 HttpContext.Session.SetString("Role", user.ChucVu);
+                HttpContext.Session.SetString("TrangThai", user.TrangThai);
 
                 // 👉 Điều hướng đến Area tương ứng theo Role
                 return RedirectToAction("Index", "Home", new { area = user.ChucVu });

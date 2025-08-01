@@ -18,8 +18,9 @@ namespace WebTravel.Attribute
             var session = context.HttpContext.Session;
             var username = session.GetString("Username");
             var role = session.GetString("Role");
+            var trangThai = session.GetString("TrangThai");
 
-            if (string.IsNullOrEmpty(username) || role != _requiredRole)
+            if (string.IsNullOrEmpty(username) || role != _requiredRole || trangThai != "Đang hoạt động")
             {
                 context.Result = new RedirectToRouteResult(
                     new RouteValueDictionary {

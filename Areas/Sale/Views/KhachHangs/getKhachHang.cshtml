@@ -7,9 +7,6 @@
 
 <h1>Quản lý khách hàng</h1>
 
-<p>
-    <a asp-action="createKhachHang">Create New</a>
-</p>
 <table class="table">
     <thead>
         <tr>
@@ -44,9 +41,8 @@
                 @Html.DisplayFor(modelItem => item.Email)
             </td>
             <td>
-                <a asp-action="updateKhachHang" asp-route-id="@item.MaKH">Edit</a> |
-                <a asp-action="detailsKhachHang" asp-route-id="@item.MaKH">Details</a> |
-                <a asp-action="deleteKhachHang" asp-route-id="@item.MaKH">Delete</a>
+                <a asp-action="createKhachHang">Create New</a> |
+                <a asp-action="updateKhachHang" asp-route-id="@item.MaKH">Edit</a> 
             </td>
         </tr>
 }
